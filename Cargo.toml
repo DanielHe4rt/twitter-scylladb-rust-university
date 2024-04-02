@@ -4,4 +4,5 @@ resolver = "2"
 members = [
     "step1",
     "step2",
+    "step3"
 ]
