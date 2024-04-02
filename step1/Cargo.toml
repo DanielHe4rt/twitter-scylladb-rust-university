@@ -13,5 +13,5 @@ charybdis = "0.4.4"
 fake = { version = "2.9.2", features = ["derive"] }
 tokio = { version = "1.0.0", features = ["rt", "rt-multi-thread", "macros"] }
 thiserror = "1.0.58"
-uuid = "1.8.0"
+uuid = { version = "1.8.0", features = ["v1"] }
 rand = "0.8.5"

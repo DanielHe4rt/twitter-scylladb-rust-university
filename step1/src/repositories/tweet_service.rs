@@ -1,8 +1,10 @@
-use std::io;
+use std::str::FromStr;
 use std::sync::Arc;
-use charybdis::QueryError;
 
+use charybdis::QueryError;
+use scylla::frame::value::CqlTimeuuid;
 use scylla::Session;
+use uuid::Uuid;
 
 use crate::models::tweet::Tweet;
 
@@ -21,16 +23,15 @@ impl TweetServiceTrait for TweetService {
             tweet_id: uuid::Uuid::new_v4(),
             author,
             text,
-            time: None,
-            created_at: chrono::Utc::now()
+            created_at: Uuid::now_v1(&[1,2,3,4,5,6])
         };
 
         let tweet_insert_query = format!(
-            "INSERT INTO mykeyspace.tweets (tweet_id, author, text, time, created_at) VALUES ({}, '{}', '{}', now(), {}) LIMIT 50",
+            "INSERT INTO mykeyspace.tweets (tweet_id, author, text, created_at) VALUES ({}, '{}', '{}', {})",
             tweet.tweet_id,
             tweet.author,
             tweet.text,
-            tweet.created_at.timestamp()
+            CqlTimeuuid::from_str(tweet.created_at.to_string().as_str()).unwrap()
         );
 
         println!("{}", tweet_insert_query);
@@ -39,7 +40,10 @@ impl TweetServiceTrait for TweetService {
 
         match session {
             Ok(_) => Ok(tweet),
-            Err(e) => Err(e),
+            Err(e) => {
+                println!("Error inserting tweet: {:?}", e);
+                Err(e)
+            },
         }
     }
 }

@@ -29,14 +29,14 @@ async fn main() {
 
             for _ in 0..10 {
                 let username = user_list.choose(&mut rand::thread_rng()).unwrap();
-                let timeline = timeline_service.insert_to_timeline(username.to_string(), &tweet).await;
+                let timeline = timeline_service.insert_to_timeline(username, &tweet).await;
 
                 match timeline {
                     Ok(timeline) => println!("Timeline created: {:?}", timeline),
                     Err(e) => println!("Error creating timeline: {:?}", e)
                 }
             }
-            let fetch_timeline =  timeline_service.get_timeline_by_username(author.to_string()).await;
+            let fetch_timeline =  timeline_service.get_timeline_by_username(author).await;
 
             match fetch_timeline {
                 Ok(timeline) => println!("Timeline fetched: {:?}", timeline),
