@@ -6,7 +6,6 @@ pub(crate) fn generate_users(amount: i32) -> Vec<String> {
 
     for _ in 0..amount {
         users.push(Username().fake());
-        println!("{:?}", users.last().unwrap());
     }
 
     users

@@ -10,7 +10,7 @@ use crate::models::timeline::Timeline;
 use crate::models::tweet::Tweet;
 
 pub trait TimelineServiceTrait {
-    async fn insert_to_timeline(&self, tweet: &Tweet, usernames: Vec<&String>) -> Result<(), QueryError>;
+    async fn insert_to_timeline(&self, tweet: &Tweet) -> Result<(), QueryError>;
 
     async fn get_timeline_by_username(&self, username: &str) -> Result<(), QueryError>;
 
@@ -22,7 +22,7 @@ pub struct TimelineService {
 }
 
 impl TimelineServiceTrait for TimelineService {
-    async fn insert_to_timeline(&self, tweet: &Tweet, usernames: Vec<&String>) -> Result<(), QueryError> {
+    async fn insert_to_timeline(&self, tweet: &Tweet) -> Result<(), QueryError> {
         let timeline_insert_query = self.connection.prepare(
             "INSERT INTO mykeyspace.timeline (username, tweet_id, author, text, liked, bookmarked, retweeted, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
         ).await?;
@@ -30,9 +30,8 @@ impl TimelineServiceTrait for TimelineService {
         let random_liked = rand::random::<bool>();
         let random_bookmarked = rand::random::<bool>();
         let random_retweeted = rand::random::<bool>();
-        for username in usernames {
             let timeline = Timeline {
-                username: username.to_string(),
+                username: "danielhe4rt".to_owned(),
                 tweet_id: tweet.tweet_id.clone(),
                 author: tweet.author.clone(),
                 text: tweet.author.clone(),
@@ -54,7 +53,6 @@ impl TimelineServiceTrait for TimelineService {
             );
 
             self.connection.execute(&timeline_insert_query, payload).await?;
-        }
 
         Ok(())
     }
@@ -74,10 +72,10 @@ impl TimelineServiceTrait for TimelineService {
 
     async fn get_liked_timeline_by_username(&self, username: &str) -> Result<(), QueryError> {
         let timeline_select_query = self.connection.prepare(
-            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM mykeyspace.timeline WHERE username = ? AND LIKED = true ALLOW FILTERING",
+            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM mykeyspace.timeline WHERE username = ? AND LIKED = ? ALLOW FILTERING",
         ).await?;
 
-        let timeline = self.connection.execute(&timeline_select_query, (username, )).await;
+        let timeline = self.connection.execute(&timeline_select_query, (username, true)).await;
 
         match timeline {
             Ok(_res) => Ok(()),

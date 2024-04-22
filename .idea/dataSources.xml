@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="mykeyspace@node-0.aws-sa-east-1.5dd4505d4dd889a2057e.clusters.scylla.cloud" uuid="d7d14944-82f4-4d7b-b243-76c4790d3edd">
+    <data-source source="LOCAL" name="DanielReis - BR" uuid="d7d14944-82f4-4d7b-b243-76c4790d3edd">
       <driver-ref>cassandra</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.dbschema.CassandraJdbcDriver</jdbc-driver>
       <jdbc-url>jdbc:cassandra://node-0.aws-sa-east-1.5dd4505d4dd889a2057e.clusters.scylla.cloud:9042/mykeyspace</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="DanielReis - EUW" uuid="a25c0e81-e021-41aa-8bd7-988ed03008d6">
+      <driver-ref>cassandra</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.CassandraJdbcDriver</jdbc-driver>
+      <jdbc-url>jdbc:cassandra://node-0.aws-eu-west-2.c19ad2013a0beadca5a8.clusters.scylla.cloud:9042</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
