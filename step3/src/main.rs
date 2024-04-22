@@ -1,6 +1,7 @@
 use std::sync::Arc;
+
 use rand::prelude::SliceRandom;
-use utils::generate_users;
+
 use crate::connection::setup_connection;
 use crate::repositories::timeline_service::{TimelineService, TimelineServiceTrait};
 use crate::repositories::tweet_service::{TweetService, TweetServiceTrait};
@@ -10,8 +11,6 @@ mod connection;
 mod utils;
 mod repositories;
 mod workers;
-
-const USERS_COUNT: i32 = 1000;
 
 #[tokio::main]
 async fn main() -> Result<(), anyerror::AnyError> {
