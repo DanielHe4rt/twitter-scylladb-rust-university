@@ -72,7 +72,12 @@ impl TimelineServiceTrait for TimelineService {
 
     async fn get_liked_timeline_by_username(&self, username: &str) -> Result<(), QueryError> {
         let timeline_select_query = self.connection.prepare(
-            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM mykeyspace.liked_timeline WHERE username = ? AND liked = ?",
+            "SELECT \
+                        username, tweet_id, author, text, liked, bookmarked, retweeted, created_at \
+                   FROM \
+                        mykeyspace.liked_timeline \
+                   WHERE \
+                        username = ? AND liked = ?",
         ).await?;
 
         let timeline = self.connection.execute(&timeline_select_query, (username, true)).await;
