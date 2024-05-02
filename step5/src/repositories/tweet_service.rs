@@ -26,7 +26,7 @@ impl TweetServiceTrait for TweetService {
         };
 
         let tweet_insert_query = self.connection.prepare(
-            "INSERT INTO tweets (tweet_id, author, text, created_at) VALUES (?, ?, ?, ?)",
+            "INSERT INTO mykeyspace.tweets (tweet_id, author, text, created_at) VALUES (?, ?, ?, ?)",
         ).await?;
 
         let payload = (
@@ -35,8 +35,6 @@ impl TweetServiceTrait for TweetService {
             tweet.text.clone(),
             CqlTimeuuid::from_str(tweet.created_at.to_string().as_str()).unwrap()
         );
-
-        println!("{:?}", tweet_insert_query);
 
         let session = self.connection.execute(&tweet_insert_query, payload).await;
 

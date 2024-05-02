@@ -1,4 +1,22 @@
 ````cassandraql
+CREATE KEYSPACE mykeyspace WITH replication = 
+    {'class': 'NetworkTopologyStrategy', 'DC1' : 3, 'DC2' : 3}
+AND durable_writes = true;
+
+CREATE KEYSPACE mykeyspace WITH replication =
+    {'class': 'NetworkTopologyStrategy', 'replication_factor' : 3}
+AND durable_writes = true;
+````
+
+````
+ALTER KEYSPACE system_auth WITH replication = { 'class' : 'NetworkTopologyStrategy', 'DC1' : 3, 'DC2' : 3};
+ALTER KEYSPACE system_distributed WITH replication = { 'class' : 'NetworkTopologyStrategy', 'DC1' : 3, 'DC2' : 3};
+ALTER KEYSPACE system_traces WITH replication = { 'class' : 'NetworkTopologyStrategy', 'DC1' : 3, 'DC2' : 3};
+
+````
+
+
+````cassandraql
 CREATE TABLE scylla_demo.tweets
 (
     tweet_id uuid PRIMARY KEY,

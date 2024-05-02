@@ -37,7 +37,7 @@ impl TimelineServiceTrait for TimelineService {
         };
 
         let timeline_insert_query = format!(
-            "INSERT INTO mykeyspace.timeline (username, tweet_id, author, text, liked, bookmarked, retweeted, created_at) VALUES ('{}', {}, '{}', '{}', {}, {}, {}, {})",
+            "INSERT INTO timeline (username, tweet_id, author, text, liked, bookmarked, retweeted, created_at) VALUES ('{}', {}, '{}', '{}', {}, {}, {}, {})",
             timeline.username,
             timeline.tweet_id,
             timeline.author,
@@ -60,7 +60,7 @@ impl TimelineServiceTrait for TimelineService {
     async fn get_timeline_by_username(&self, username: &str) -> Result<(), QueryError> {
 
         let timeline_select_query = format!(
-            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM mykeyspace.timeline WHERE username = '{}'",
+            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline WHERE username = '{}'",
             username
         );
 

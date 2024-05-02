@@ -15,5 +15,12 @@
       <jdbc-url>jdbc:cassandra://node-0.aws-eu-west-2.c19ad2013a0beadca5a8.clusters.scylla.cloud:9042</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="@localhost" uuid="ad6ecc14-3e62-4b5c-b8b5-a40c0399adf7">
+      <driver-ref>cassandra</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.CassandraJdbcDriver</jdbc-driver>
+      <jdbc-url>jdbc:cassandra://localhost:9042</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

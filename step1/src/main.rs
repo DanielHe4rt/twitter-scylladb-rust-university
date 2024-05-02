@@ -1,5 +1,7 @@
 use std::sync::Arc;
+use charybdis::options::Consistency;
 use rand::prelude::SliceRandom;
+use scylla::ExecutionProfile;
 use utils::generate_users;
 use crate::connection::setup_connection;
 use crate::repositories::timeline_service::{TimelineService, TimelineServiceTrait};

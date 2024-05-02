@@ -27,7 +27,7 @@ impl TweetServiceTrait for TweetService {
         };
 
         let tweet_insert_query = format!(
-            "INSERT INTO mykeyspace.tweets (tweet_id, author, text, created_at) VALUES ({}, '{}', '{}', {})",
+            "INSERT INTO tweets (tweet_id, author, text, created_at) VALUES ({}, '{}', '{}', {})",
             tweet.tweet_id,
             tweet.author,
             tweet.text,

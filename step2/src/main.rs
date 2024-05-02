@@ -24,27 +24,28 @@ async fn main() {
         let author = user_list.choose(&mut rand::thread_rng()).unwrap();
         let text = "This is a tweet".to_string();
 
-        if let Ok(tweet) = tweet_service.create_tweet(author.to_string(), text.clone()).await {
-            println!("Tweet created: {:?}", tweet);
 
-            for _ in 0..10 {
-                let username = user_list.choose(&mut rand::thread_rng()).unwrap();
-                let timeline = timeline_service.insert_to_timeline(username, &tweet).await;
+        match tweet_service.create_tweet(author.to_string(), text.clone()).await {
+            Ok(tweet) => {
+                println!("Tweet created: {:?}", tweet);
 
-                match timeline {
-                    Ok(timeline) => println!("Timeline created: {:?}", timeline),
-                    Err(e) => println!("Error creating timeline: {:?}", e)
+                for _ in 0..10 {
+                    let username = user_list.choose(&mut rand::thread_rng()).unwrap();
+                    let timeline = timeline_service.insert_to_timeline(username, &tweet).await;
+
+                    match timeline {
+                        Ok(timeline) => println!("Timeline created: {:?}", timeline),
+                        Err(e) => println!("Error creating timeline: {:?}", e)
+                    }
                 }
-            }
-            let fetch_timeline =  timeline_service.get_timeline_by_username(author).await;
+                let fetch_timeline =  timeline_service.get_timeline_by_username(author).await;
 
-            match fetch_timeline {
-                Ok(timeline) => println!("Timeline fetched: {:?}", timeline),
-                Err(e) => println!("Error fetching timeline: {:?}", e)
-            }
-
-        } else {
-            println!("Error creating tweet: ");
+                match fetch_timeline {
+                    Ok(timeline) => println!("Timeline fetched: {:?}", timeline),
+                    Err(e) => println!("Error fetching timeline: {:?}", e)
+                }
+            },
+            Err(e) => println!("Error creating tweet: {:?}", e)
         }
     }
 }
