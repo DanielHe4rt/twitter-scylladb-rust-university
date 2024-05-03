@@ -1,10 +1,8 @@
-use std::str::FromStr;
 use std::sync::Arc;
 
 use charybdis::QueryError;
-use scylla::frame::value::CqlTimeuuid;
+use charybdis::types::Timeuuid;
 use scylla::Session;
-use uuid::Uuid;
 
 use crate::models::timeline::Timeline;
 use crate::models::tweet::Tweet;
@@ -33,7 +31,7 @@ impl TimelineServiceTrait for TimelineService {
             liked: random_liked,
             bookmarked: random_bookmarked,
             retweeted: random_retweeted,
-            created_at: Uuid::now_v1(&[1, 2, 3, 4, 5, 6]),
+            created_at: Timeuuid::now_v1(&[1, 2, 3, 4, 5, 6]),
         };
 
         let timeline_insert_query = self.connection.prepare(
@@ -48,10 +46,8 @@ impl TimelineServiceTrait for TimelineService {
             timeline.liked,
             timeline.bookmarked,
             timeline.retweeted,
-            CqlTimeuuid::from_str(tweet.created_at.to_string().as_str()).unwrap()
+            tweet.created_at,
         );
-
-        println!("{:?}", timeline_insert_query);
 
         let session = self.connection.execute(&timeline_insert_query, payload).await;
 
@@ -63,7 +59,7 @@ impl TimelineServiceTrait for TimelineService {
 
     async fn get_timeline_by_username(&self, username: &str) -> Result<(), QueryError> {
         let timeline_select_query = self.connection.prepare(
-            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline WHERE username = ?",
+            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline WHERE username = ? LIMIT 50",
         ).await?;
 
         let timeline = self.connection.execute(&timeline_select_query, (username, )).await;

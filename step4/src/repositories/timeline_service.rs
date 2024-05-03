@@ -24,7 +24,7 @@ pub struct TimelineService {
 impl TimelineServiceTrait for TimelineService {
     async fn insert_to_timeline(&self, tweet: &Tweet) -> Result<(), QueryError> {
         let timeline_insert_query = self.connection.prepare(
-            "INSERT INTO mykeyspace.timeline (username, tweet_id, author, text, liked, bookmarked, retweeted, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO timeline (username, tweet_id, author, text, liked, bookmarked, retweeted, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
         ).await?;
 
         let random_liked = rand::random::<bool>();
@@ -59,7 +59,7 @@ impl TimelineServiceTrait for TimelineService {
 
     async fn get_timeline_by_username(&self, username: &str) -> Result<(), QueryError> {
         let timeline_select_query = self.connection.prepare(
-            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM mykeyspace.timeline WHERE username = ?",
+            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline WHERE username = ?",
         ).await?;
 
         let timeline = self.connection.execute(&timeline_select_query, (username, )).await;
@@ -75,7 +75,7 @@ impl TimelineServiceTrait for TimelineService {
             "SELECT \
                         username, tweet_id, author, text, liked, bookmarked, retweeted, created_at \
                    FROM \
-                        mykeyspace.liked_timeline \
+                        liked_timeline \
                    WHERE \
                         username = ? AND liked = ?",
         ).await?;

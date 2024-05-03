@@ -5,7 +5,7 @@ use scylla::load_balancing::DefaultPolicy;
 pub async fn setup_connection() -> Session {
 
     let policies = DefaultPolicy::builder()
-        .token_aware(true)
+        .token_aware(false)
         .build();
 
     let execution_profile = ExecutionProfile::builder()

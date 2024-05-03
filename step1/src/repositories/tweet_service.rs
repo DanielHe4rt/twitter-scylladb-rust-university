@@ -2,6 +2,7 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use charybdis::QueryError;
+use charybdis::types::Timeuuid;
 use scylla::frame::value::CqlTimeuuid;
 use scylla::Session;
 use uuid::Uuid;
@@ -9,7 +10,7 @@ use uuid::Uuid;
 use crate::models::tweet::Tweet;
 
 pub trait TweetServiceTrait {
-    async fn create_tweet(&self, author: String, text: String) -> Result<Tweet, QueryError>;
+    async fn create_tweet(&self, author: &str, text: String) -> Result<Tweet, QueryError>;
 }
 
 pub struct TweetService {
@@ -17,13 +18,13 @@ pub struct TweetService {
 }
 
 impl TweetServiceTrait for TweetService {
-    async fn create_tweet(&self, author: String, text: String) -> Result<Tweet, QueryError> {
+    async fn create_tweet(&self, author: &str, text: String) -> Result<Tweet, QueryError> {
 
         let tweet = Tweet {
-            tweet_id: uuid::Uuid::new_v4(),
-            author,
+            tweet_id: Uuid::new_v4(),
+            author: author.to_string(),
             text,
-            created_at: Uuid::now_v1(&[1,2,3,4,5,6])
+            created_at: Timeuuid::now_v1(&[1,2,3,4,5,6])
         };
 
         let tweet_insert_query = format!(
@@ -31,7 +32,7 @@ impl TweetServiceTrait for TweetService {
             tweet.tweet_id,
             tweet.author,
             tweet.text,
-            CqlTimeuuid::from_str(tweet.created_at.to_string().as_str()).unwrap()
+            tweet.created_at
         );
 
         println!("{}", tweet_insert_query);

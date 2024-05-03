@@ -1,5 +1,51 @@
 {
-  "tables": {},
+  "tables": {
+    "tweets": {
+      "fields": {
+        "text": "text",
+        "tweet_id": "uuid",
+        "created_at": "timeuuid",
+        "author": "text"
+      },
+      "type_name": "",
+      "table_name": "",
+      "base_table": "",
+      "partition_keys": [
+        "tweet_id"
+      ],
+      "clustering_keys": [
+        "created_at"
+      ],
+      "global_secondary_indexes": [],
+      "local_secondary_indexes": [],
+      "table_options": null
+    },
+    "timeline": {
+      "fields": {
+        "liked": "boolean",
+        "tweet_id": "uuid",
+        "username": "text",
+        "author": "text",
+        "created_at": "timeuuid",
+        "bookmarked": "boolean",
+        "text": "text",
+        "retweeted": "boolean"
+      },
+      "type_name": "",
+      "table_name": "",
+      "base_table": "",
+      "partition_keys": [
+        "username"
+      ],
+      "clustering_keys": [
+        "created_at",
+        "tweet_id"
+      ],
+      "global_secondary_indexes": [],
+      "local_secondary_indexes": [],
+      "table_options": null
+    }
+  },
   "udts": {},
   "materialized_views": {},
   "keyspace_name": "uni_twitter"

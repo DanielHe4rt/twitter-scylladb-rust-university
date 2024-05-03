@@ -2,6 +2,7 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use charybdis::QueryError;
+use charybdis::types::Timeuuid;
 use scylla::frame::value::CqlTimeuuid;
 use scylla::Session;
 use uuid::Uuid;
@@ -30,36 +31,36 @@ impl TimelineServiceTrait for TimelineService {
         let random_liked = rand::random::<bool>();
         let random_bookmarked = rand::random::<bool>();
         let random_retweeted = rand::random::<bool>();
-            let timeline = Timeline {
-                username: "danielhe4rt".to_owned(),
-                tweet_id: tweet.tweet_id.clone(),
-                author: tweet.author.clone(),
-                text: tweet.author.clone(),
-                liked: random_liked,
-                bookmarked: random_bookmarked,
-                retweeted: random_retweeted,
-                created_at: Uuid::now_v1(&[1, 2, 3, 4, 5, 6]),
-            };
+        let timeline = Timeline {
+            username: "danielhe4rt".to_owned(),
+            tweet_id: tweet.tweet_id.clone(),
+            author: tweet.author.clone(),
+            text: tweet.author.clone(),
+            liked: random_liked,
+            bookmarked: random_bookmarked,
+            retweeted: random_retweeted,
+            created_at: Timeuuid::now_v1(&[1, 2, 3, 4, 5, 6])
+        };
 
-            let payload = (
-                timeline.username,
-                timeline.tweet_id,
-                timeline.author,
-                timeline.text,
-                timeline.liked,
-                timeline.bookmarked,
-                timeline.retweeted,
-                CqlTimeuuid::from_str(tweet.created_at.to_string().as_str()).unwrap()
-            );
+        let payload = (
+            timeline.username,
+            timeline.tweet_id,
+            timeline.author,
+            timeline.text,
+            timeline.liked,
+            timeline.bookmarked,
+            timeline.retweeted,
+            CqlTimeuuid::from_str(tweet.created_at.to_string().as_str()).unwrap()
+        );
 
-            self.connection.execute(&timeline_insert_query, payload).await?;
+        self.connection.execute(&timeline_insert_query, payload).await?;
 
         Ok(())
     }
 
     async fn get_timeline_by_username(&self, username: &str) -> Result<(), QueryError> {
         let timeline_select_query = self.connection.prepare(
-            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM mykeyspace.timeline WHERE username = ? LIMIT 50",
+            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline WHERE username = ? LIMIT 50",
         ).await?;
 
         let timeline = self.connection.execute(&timeline_select_query, (username, )).await;
@@ -75,7 +76,7 @@ impl TimelineServiceTrait for TimelineService {
             "SELECT \
                         username, tweet_id, author, text, liked, bookmarked, retweeted, created_at \
                    FROM \
-                        mykeyspace.liked_timeline \
+                        timeline_liked \
                    WHERE \
                         username = ? AND liked = ? LIMIT 50",
         ).await?;

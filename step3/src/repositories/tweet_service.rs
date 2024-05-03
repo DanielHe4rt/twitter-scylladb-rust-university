@@ -26,7 +26,7 @@ impl TweetServiceTrait for TweetService {
         };
 
         let tweet_insert_query = self.connection.prepare(
-            "INSERT INTO mykeyspace.tweets (tweet_id, author, text, created_at) VALUES (?, ?, ?, ?)",
+            "INSERT INTO tweets (tweet_id, author, text, created_at) VALUES (?, ?, ?, ?)",
         ).await?;
 
         let payload = (

@@ -40,7 +40,7 @@ create table scylla_demo.timeline
 ````
 
 ````cassandraql
-INSERT INTO mykeyspace.tweets
+INSERT INTO tweets
     (tweet_id, author, text, time, created_at)
 VALUES 
     ({}, '{}', '{}', now(), {}); 
@@ -60,13 +60,14 @@ WHERE
     username = '{}'
 ````
 
-create materialized view scylla_demo.timeline_liked as select tweet_id,user,time,author,text,liked
-from scylla_demo.timeline
-where tweet_id is not null and
-user is not null and
-time is not null and
-author is not null and
-text is not null and
-liked is not null
-primary key ((user,liked),time,tweet_id)
-WITH CLUSTERING ORDER BY (time DESC);
+`````cassandraql
+create materialized view timeline_liked as
+select tweet_id, username, author, author, text, liked, bookmarked, retweeted, created_at
+from timeline
+where tweet_id is not null
+  and username is not null
+  and created_at is not null
+  and liked is not null
+primary key ((username, liked), created_at, tweet_id)
+WITH CLUSTERING ORDER BY (created_at DESC);
+`````

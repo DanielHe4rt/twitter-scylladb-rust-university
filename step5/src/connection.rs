@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use charybdis::options::Consistency;
 use scylla::{ExecutionProfile, Session, SessionBuilder};
 use scylla::load_balancing::DefaultPolicy;
@@ -6,8 +5,8 @@ use scylla::load_balancing::DefaultPolicy;
 pub async fn setup_connection() -> Session {
 
     let policies = DefaultPolicy::builder()
-        .prefer_datacenter("DC1".to_string())
-        .token_aware(false)
+        //.prefer_datacenter("DC1".to_string())
+        .token_aware(true)
         .build();
 
     let execution_profile = ExecutionProfile::builder()
@@ -22,7 +21,7 @@ pub async fn setup_connection() -> Session {
         .await
         .unwrap();
 
-    let _ = session.use_keyspace("mykeyspace", true).await;
+    let _ = session.use_keyspace("uni_twitter", true).await;
 
     session
 }
