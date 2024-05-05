@@ -7,10 +7,11 @@ pub async fn twitter_ingestion(
     timeline_service: Arc<TimelineService>,
     tweet_service: Arc<TweetService>,
 ) {
+    let author = "danielhe4rt";
+    let text = "very nice".to_string();
     loop {
-        let author = "danielhe4rt".to_owned();
-        let text = "very nice".to_string();
-        let tweet_creation = tweet_service.create_tweet(author.to_string(), text.clone()).await;
+
+        let tweet_creation = tweet_service.create_tweet(&author, &text).await;
 
         match tweet_creation {
             Ok(tweet) => {
