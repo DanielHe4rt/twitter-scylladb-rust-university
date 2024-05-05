@@ -34,7 +34,7 @@ impl TweetServiceTrait for TweetService {
             tweet.tweet_id.clone(),
             tweet.author.clone(),
             tweet.text.clone(),
-            CqlTimeuuid::from_str(tweet.created_at.to_string().as_str()).unwrap()
+            tweet.created_at
         );
 
         let session = self.connection.execute(&tweet_insert_query, payload).await;

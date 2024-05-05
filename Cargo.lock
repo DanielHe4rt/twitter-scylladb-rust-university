@@ -143,31 +143,12 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "charybdis"
-version = "0.4.18"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a23732ca9043d64f7dd4b9bd48a8e0feea8caff9401597f28bb258c48b43a424"
-dependencies = [
- "bigdecimal",
- "charybdis_macros 0.4.18",
- "chrono",
- "colored",
- "futures",
- "num-bigint 0.4.4",
- "scylla",
- "serde",
- "serde_json",
- "tokio",
- "uuid",
-]
-
-[[package]]
-name = "charybdis"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "856bf76887d479b5491bfb84d9d6003fb1b1b36ed25c8a163c4c5d6ca55156ab"
 dependencies = [
  "bigdecimal",
- "charybdis_macros 0.5.2",
+ "charybdis_macros",
  "chrono",
  "colored",
  "futures",
@@ -176,19 +157,6 @@ dependencies = [
  "serde",
  "serde_json",
  "uuid",
-]
-
-[[package]]
-name = "charybdis_macros"
-version = "0.4.18"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50971a4a038691998a2075caa7c3e3ca49cccae017bcec9a43d642e7290c5eb8"
-dependencies = [
- "charybdis_parser 0.4.18",
- "darling",
- "proc-macro2",
- "quote",
- "syn 2.0.60",
 ]
 
 [[package]]
@@ -197,30 +165,11 @@ version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "713f4a4622339d838ef31f74bb2d323da941f7ce10c56db62eb1a4d1979f01de"
 dependencies = [
- "charybdis_parser 0.5.2",
+ "charybdis_parser",
  "darling",
  "proc-macro2",
  "quote",
  "syn 2.0.60",
-]
-
-[[package]]
-name = "charybdis_parser"
-version = "0.4.18"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3110136739ed7f74078560ebf24e7cfefef51088547a5098ff32a0d8e95ec8cc"
-dependencies = [
- "colored",
- "darling",
- "proc-macro2",
- "quote",
- "scylla",
- "serde",
- "serde_json",
- "strum 0.26.2",
- "strum_macros 0.26.2",
- "syn 2.0.60",
- "walkdir",
 ]
 
 [[package]]
@@ -747,16 +696,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
 
 [[package]]
-name = "parking_lot"
-version = "0.12.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e4af0ca4f6caed20e900d564c242b8e5d4903fdacf31d3daf527b66fe6f42fb"
-dependencies = [
- "lock_api",
- "parking_lot_core",
-]
-
-[[package]]
 name = "parking_lot_core"
 version = "0.9.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -874,7 +813,7 @@ name = "rust-scylladb-university-1"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "charybdis 0.5.3",
+ "charybdis",
  "chrono",
  "dotenvy",
  "fake",
@@ -890,7 +829,7 @@ name = "rust-scylladb-university-2"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "charybdis 0.5.3",
+ "charybdis",
  "chrono",
  "dotenvy",
  "fake",
@@ -907,7 +846,7 @@ version = "0.1.0"
 dependencies = [
  "anyerror",
  "anyhow",
- "charybdis 0.4.18",
+ "charybdis",
  "chrono",
  "dotenvy",
  "fake",
@@ -924,7 +863,7 @@ version = "0.1.0"
 dependencies = [
  "anyerror",
  "anyhow",
- "charybdis 0.4.18",
+ "charybdis",
  "chrono",
  "dotenvy",
  "fake",
@@ -941,7 +880,7 @@ version = "0.1.0"
 dependencies = [
  "anyerror",
  "anyhow",
- "charybdis 0.5.3",
+ "charybdis",
  "chrono",
  "dotenvy",
  "fake",
@@ -1091,15 +1030,6 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
-]
-
-[[package]]
-name = "signal-hook-registry"
-version = "1.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a9e9e0b4211b72e7b8b6e85c807d36c212bdb33ea8587f7569562a84df5465b1"
-dependencies = [
- "libc",
 ]
 
 [[package]]
@@ -1255,9 +1185,7 @@ dependencies = [
  "libc",
  "mio",
  "num_cpus",
- "parking_lot",
  "pin-project-lite",
- "signal-hook-registry",
  "socket2",
  "tokio-macros",
  "windows-sys 0.48.0",

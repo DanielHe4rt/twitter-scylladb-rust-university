@@ -1,11 +1,8 @@
-use std::str::FromStr;
 use std::sync::Arc;
 
 use charybdis::QueryError;
 use charybdis::types::Timeuuid;
-use scylla::frame::value::CqlTimeuuid;
 use scylla::Session;
-use uuid::Uuid;
 
 use crate::models::timeline::Timeline;
 use crate::models::tweet::Tweet;
@@ -31,6 +28,7 @@ impl TimelineServiceTrait for TimelineService {
         let random_liked = rand::random::<bool>();
         let random_bookmarked = rand::random::<bool>();
         let random_retweeted = rand::random::<bool>();
+
         let timeline = Timeline {
             username: "danielhe4rt".to_owned(),
             tweet_id: tweet.tweet_id.clone(),
@@ -50,7 +48,7 @@ impl TimelineServiceTrait for TimelineService {
             timeline.liked,
             timeline.bookmarked,
             timeline.retweeted,
-            CqlTimeuuid::from_str(tweet.created_at.to_string().as_str()).unwrap()
+            tweet.created_at
         );
 
         self.connection.execute(&timeline_insert_query, payload).await?;

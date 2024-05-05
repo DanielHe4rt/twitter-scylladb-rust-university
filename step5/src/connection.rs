@@ -15,7 +15,7 @@ pub async fn setup_connection() -> Session {
         .build();
 
     let session = SessionBuilder::new()
-        .known_nodes(vec!["localhost:9042","localhost:9043","localhost:9044"])
+        .known_nodes(vec!["localhost:9042"])
         .default_execution_profile_handle(execution_profile.into_handle())
         .build()
         .await

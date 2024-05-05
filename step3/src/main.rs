@@ -14,9 +14,8 @@ mod workers;
 
 #[tokio::main]
 async fn main() -> Result<(), anyerror::AnyError> {
-    let connection = Arc::new(setup_connection().await);
-    let tweet_service = Arc::new(TweetService { connection: Arc::clone(&connection) });
-    let timeline_service = Arc::new(TimelineService { connection: Arc::clone(&connection) });
+    let tweet_service = Arc::new(TweetService { connection: Arc::new(setup_connection().await) });
+    let timeline_service = Arc::new(TimelineService { connection: Arc::new(setup_connection().await) });
     let timeline_service2 = Arc::clone(&timeline_service);
 
     let ingestion_task = tokio::spawn(async move {

@@ -15,7 +15,14 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let tweet_service = Arc::new(TweetService { connection: Arc::new(setup_connection().await) });
     let timeline_service = Arc::new(TimelineService { connection: Arc::new(setup_connection().await) });
+
     let timeline_service2 = Arc::clone(&timeline_service);
+
+    let metrics_task = tokio::spawn(async move {
+        workers::metrics::fetch_timelines(
+            timeline_service2,
+        ).await;
+    });
 
     let ingestion_task = tokio::spawn(async move {
         workers::ingestion::twitter_ingestion(
@@ -24,13 +31,7 @@ async fn main() -> Result<(), anyhow::Error> {
         ).await;
     });
 
-    let metrics_task = tokio::spawn(async move {
-        workers::metrics::fetch_timelines(
-            timeline_service2,
-        ).await;
-    });
-
-    tokio::try_join!(ingestion_task, metrics_task).unwrap();
+    tokio::try_join!(metrics_task, ingestion_task).unwrap();
 
     Ok(())
 }
