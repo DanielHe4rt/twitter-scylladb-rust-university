@@ -2,6 +2,7 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use charybdis::QueryError;
+use charybdis::types::Timeuuid;
 use scylla::frame::value::CqlTimeuuid;
 use scylla::Session;
 use uuid::Uuid;
@@ -38,7 +39,7 @@ impl TimelineServiceTrait for TimelineService {
                 liked: random_liked,
                 bookmarked: random_bookmarked,
                 retweeted: random_retweeted,
-                created_at: Uuid::now_v1(&[1, 2, 3, 4, 5, 6]),
+                created_at: Timeuuid::now_v1(&[1, 2, 3, 4, 5, 6]),
             };
 
             let payload = (
@@ -75,7 +76,7 @@ impl TimelineServiceTrait for TimelineService {
             "SELECT \
                         username, tweet_id, author, text, liked, bookmarked, retweeted, created_at \
                    FROM \
-                        liked_timeline \
+                        timeline_liked \
                    WHERE \
                         username = ? AND liked = ?",
         ).await?;

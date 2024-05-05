@@ -2,9 +2,9 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use charybdis::QueryError;
+use charybdis::types::Timeuuid;
 use scylla::frame::value::CqlTimeuuid;
 use scylla::Session;
-use uuid::Uuid;
 
 use crate::models::tweet::Tweet;
 
@@ -22,7 +22,7 @@ impl TweetServiceTrait for TweetService {
             tweet_id: uuid::Uuid::new_v4(),
             author,
             text,
-            created_at: Uuid::now_v1(&[1, 2, 3, 4, 5, 6]),
+            created_at: Timeuuid::now_v1(&[1, 2, 3, 4, 5, 6]),
         };
 
         let tweet_insert_query = self.connection.prepare(
@@ -33,7 +33,7 @@ impl TweetServiceTrait for TweetService {
             tweet.tweet_id.clone(),
             tweet.author.clone(),
             tweet.text.clone(),
-            CqlTimeuuid::from_str(tweet.created_at.to_string().as_str()).unwrap()
+            tweet.created_at
         );
 
         let session = self.connection.execute(&tweet_insert_query, payload).await;
