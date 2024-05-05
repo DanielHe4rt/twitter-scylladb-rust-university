@@ -50,7 +50,7 @@ impl TimelineServiceTrait for TimelineService {
             timeline.liked,
             timeline.bookmarked,
             timeline.retweeted,
-            CqlTimeuuid::from_str(tweet.created_at.to_string().as_str()).unwrap()
+            tweet.created_at
         );
 
         self.connection.execute(&timeline_insert_query, payload).await?;
@@ -78,7 +78,7 @@ impl TimelineServiceTrait for TimelineService {
                    FROM \
                         timeline_liked \
                    WHERE \
-                        username = ? AND liked = ?",
+                        username = ? AND liked = ? LIMIT 50",
         ).await?;
 
         let timeline = self.connection.execute(&timeline_select_query, (username, true)).await;
