@@ -22,7 +22,7 @@ pub struct TimelineService {
 impl TimelineServiceTrait for TimelineService {
     async fn insert_to_timeline(&self, tweet: &Tweet) -> Result<(), QueryError> {
         let timeline_insert_query = self.connection.prepare(
-            "INSERT INTO uni_twitter.timeline (username, tweet_id, author, text, liked, bookmarked, retweeted, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO timeline (username, tweet_id, author, text, liked, bookmarked, retweeted, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
         ).await?;
 
         let random_liked = rand::random::<bool>();

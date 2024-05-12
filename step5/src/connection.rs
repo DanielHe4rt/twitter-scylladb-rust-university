@@ -1,16 +1,14 @@
-use charybdis::options::Consistency;
 use scylla::{ExecutionProfile, Session, SessionBuilder};
 use scylla::load_balancing::DefaultPolicy;
 
 pub async fn setup_connection() -> Session {
 
     let policies = DefaultPolicy::builder()
-        //.prefer_datacenter("DC1".to_string())
-        .token_aware(true)
+        .prefer_datacenter("DC1".to_string())
         .build();
 
     let execution_profile = ExecutionProfile::builder()
-        .consistency(Consistency::LocalQuorum)
+        // .consistency(Consistency::LocalQuorum)
         .load_balancing_policy(policies)
         .build();
 
@@ -21,7 +19,7 @@ pub async fn setup_connection() -> Session {
         .await
         .unwrap();
 
-    let _ = session.use_keyspace("uni_twitter", true).await;
+    let _ = session.use_keyspace("mykeyspace", true).await;
 
     session
 }

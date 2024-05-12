@@ -2,13 +2,13 @@
   "tables": {
     "timeline": {
       "fields": {
-        "author": "text",
-        "username": "text",
         "retweeted": "boolean",
         "tweet_id": "uuid",
-        "created_at": "timeuuid",
         "text": "text",
+        "created_at": "timeuuid",
         "liked": "boolean",
+        "author": "text",
+        "username": "text",
         "bookmarked": "boolean"
       },
       "type_name": "",
@@ -29,8 +29,8 @@
       "fields": {
         "author": "text",
         "created_at": "timeuuid",
-        "text": "text",
-        "tweet_id": "uuid"
+        "tweet_id": "uuid",
+        "text": "text"
       },
       "type_name": "",
       "table_name": "",
@@ -48,5 +48,5 @@
   },
   "udts": {},
   "materialized_views": {},
-  "keyspace_name": "uni_twitter"
+  "keyspace_name": "mykeyspace"
 }

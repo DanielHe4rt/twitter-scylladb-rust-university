@@ -15,7 +15,7 @@ pub async fn setup_connection() -> Session {
         .await
         .unwrap();
 
-    let _ = session.use_keyspace("uni_twitter", true).await;
+    let _ = session.use_keyspace("mykeyspace", true).await;
 
     session
 }
