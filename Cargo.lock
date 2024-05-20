@@ -909,6 +909,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "rust-scylladb-university-7"
+version = "0.1.0"
+dependencies = [
+ "anyerror",
+ "anyhow",
+ "charybdis",
+ "chrono",
+ "dotenvy",
+ "fake",
+ "rand",
+ "scylla",
+ "thiserror",
+ "tokio",
+ "uuid",
+]
+
+[[package]]
 name = "rustc-demangle"
 version = "0.1.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"

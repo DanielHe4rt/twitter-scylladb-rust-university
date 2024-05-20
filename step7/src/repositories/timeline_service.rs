@@ -102,17 +102,15 @@ impl TimelineServiceTrait for TimelineService {
     async fn get_reverse_timeline_by_username(&self, username: &str) -> Result<(), QueryError> {
         println!("Getting reverse timeline for user: {}", username);
         let mut timeline_select_query = self.connection.prepare(
-            "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at
-                        FROM timeline
-                        WHERE
-                            username = ? AND
-                            liked = ?
-                        ORDER BY created_at ASC
-                        ALLOW FILTERING
-                        ",
+            "SELECT username, tweet_id, author, text, created_at
+                FROM first_timeline_tweets
+                WHERE username = ?
+            "
         ).await?;
 
-        let timeline = self.connection.execute(&timeline_select_query, (username, true)).await;
+        timeline_select_query.set_page_size(5);
+
+        let timeline = self.connection.execute(&timeline_select_query, (username,)).await;
 
         match timeline {
             Ok(_res) => Ok(()),
