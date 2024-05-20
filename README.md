@@ -29,14 +29,16 @@ CREATE TABLE scylla_demo.tweets
 ````cassandraql
 create table scylla_demo.timeline
 (
-    tweet_id uuid,
-    time     timeuuid,
-    user     text,
-    author   text,
-    text     text,
-    liked    boolean,
-    PRIMARY KEY (user, time, tweet_id)
-) WITH CLUSTERING ORDER BY (time DESC);
+    username   text,
+    tweet_id   uuid,
+    created_at timeuuid,
+    author     text,
+    text       text,
+    liked      boolean,
+    bookmarked boolean,
+    retweeted  boolean,
+    PRIMARY KEY (username, created_at, tweet_id)
+) WITH CLUSTERING ORDER BY (created_at DESC);
 ````
 
 ````cassandraql
@@ -61,6 +63,10 @@ WHERE
 ````
 
 `````cassandraql
+
+SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline_liked  WHERE 
+    username = 'danielhe4rt' ORDER BY created_at DESC ALLOW FILTERING ;
+
 create materialized view timeline_liked as
 select tweet_id, username, author, author, text, liked, bookmarked, retweeted, created_at
 from timeline
@@ -70,4 +76,13 @@ where tweet_id is not null
   and liked is not null
 primary key ((username, liked), created_at, tweet_id)
 WITH CLUSTERING ORDER BY (created_at DESC);
+
+CREATE MATERIALIZED VIEW first_timeline_tweets AS
+SELECT tweet_id, username, author, author, text, created_at
+FROM timeline
+WHERE tweet_id IS NOT null
+  AND username IS NOT null
+  AND created_at IS NOT null
+PRIMARY KEY (username, created_at, tweet_id)
+WITH CLUSTERING ORDER BY (created_at ASC);
 `````

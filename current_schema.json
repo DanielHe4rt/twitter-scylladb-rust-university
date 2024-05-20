@@ -1,51 +1,5 @@
 {
-  "tables": {
-    "timeline": {
-      "fields": {
-        "retweeted": "boolean",
-        "tweet_id": "uuid",
-        "text": "text",
-        "created_at": "timeuuid",
-        "liked": "boolean",
-        "author": "text",
-        "username": "text",
-        "bookmarked": "boolean"
-      },
-      "type_name": "",
-      "table_name": "",
-      "base_table": "",
-      "partition_keys": [
-        "username"
-      ],
-      "clustering_keys": [
-        "created_at",
-        "tweet_id"
-      ],
-      "global_secondary_indexes": [],
-      "local_secondary_indexes": [],
-      "table_options": null
-    },
-    "tweets": {
-      "fields": {
-        "author": "text",
-        "created_at": "timeuuid",
-        "tweet_id": "uuid",
-        "text": "text"
-      },
-      "type_name": "",
-      "table_name": "",
-      "base_table": "",
-      "partition_keys": [
-        "tweet_id"
-      ],
-      "clustering_keys": [
-        "created_at"
-      ],
-      "global_secondary_indexes": [],
-      "local_secondary_indexes": [],
-      "table_options": null
-    }
-  },
+  "tables": {},
   "udts": {},
   "materialized_views": {},
   "keyspace_name": "mykeyspace"
