@@ -1,9 +1,7 @@
-use std::str::FromStr;
 use std::sync::Arc;
 
 use charybdis::QueryError;
 use charybdis::types::Timeuuid;
-use scylla::frame::value::CqlTimeuuid;
 use scylla::Session;
 use uuid::Uuid;
 

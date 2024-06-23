@@ -1,4 +1,5 @@
 use std::sync::Arc;
+
 use log::info;
 
 use crate::repositories::timeline_service::{TimelineService, TimelineServiceTrait};
@@ -17,11 +18,11 @@ pub async fn twitter_ingestion(
 
         match tweet_creation {
             Ok(tweet) => {
-                info!("Tweet created!");
+                info!("Tweet created by {}: {}", tweet.author, tweet.tweet_id);
                 let timeline = timeline_service.insert_to_timeline(&author, &tweet).await;
 
                 match timeline {
-                    Ok(timeline) => info!("Timeline created!"),
+                    Ok(timeline) => info!("Added to timeline {}: {}", timeline.username, timeline.tweet_id),
                     Err(e) => info!("Error creating timeline: {:?}", e)
                 }
             }
