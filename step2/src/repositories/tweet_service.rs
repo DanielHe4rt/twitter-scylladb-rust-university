@@ -4,17 +4,36 @@ use std::sync::Arc;
 use charybdis::QueryError;
 use charybdis::types::Timeuuid;
 use scylla::frame::value::CqlTimeuuid;
+use scylla::prepared_statement::PreparedStatement;
 use scylla::Session;
 use uuid::Uuid;
 
 use crate::models::tweet::Tweet;
+
+const INSERT_TWEET_QUERY: &str = "INSERT INTO tweets (tweet_id, author, text, created_at) VALUES (?, ?, ?, ?)";
 
 pub trait TweetServiceTrait {
     async fn create_tweet(&self, author: &str, text: String) -> Result<Tweet, QueryError>;
 }
 
 pub struct TweetService {
-    pub connection: Arc<Session>,
+    connection: Arc<Session>,
+    insert_tweet_query: PreparedStatement,
+}
+
+impl TweetService {
+    pub async fn new(connection: Arc<Session>) -> Self {
+        let insert_tweet_query = connection
+            .prepare(INSERT_TWEET_QUERY)
+            .await
+            .unwrap();
+
+
+        Self {
+            connection,
+            insert_tweet_query,
+        }
+    }
 }
 
 impl TweetServiceTrait for TweetService {
@@ -26,9 +45,6 @@ impl TweetServiceTrait for TweetService {
             created_at: Timeuuid::now_v1(&[1, 2, 3, 4, 5, 6]),
         };
 
-        let tweet_insert_query = self.connection.prepare(
-            "INSERT INTO tweets (tweet_id, author, text, created_at) VALUES (?, ?, ?, ?)",
-        ).await?;
 
         let payload = (
             tweet.tweet_id.clone(),
@@ -37,7 +53,7 @@ impl TweetServiceTrait for TweetService {
             CqlTimeuuid::from_str(tweet.created_at.to_string().as_str()).unwrap()
         );
 
-        let session = self.connection.execute(&tweet_insert_query, payload).await;
+        let session = self.connection.execute(&self.insert_tweet_query, payload).await;
 
         match session {
             Ok(_) => Ok(tweet),
