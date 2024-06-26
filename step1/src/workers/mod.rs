@@ -1,2 +1,3 @@
-pub mod metrics;
+
 pub mod ingestion;
+mod stats;

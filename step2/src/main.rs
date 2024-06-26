@@ -3,11 +3,9 @@ use tokio::task::JoinSet;
 
 use crate::connection::setup_connection;
 use crate::repositories::Repositories;
-use crate::utils::generate_users;
 
 mod models;
 mod connection;
-mod utils;
 mod repositories;
 mod workers;
 mod logger;
@@ -26,20 +24,16 @@ async fn main() -> Result<(), anyhow::Error> {
     let mut set = JoinSet::new();
 
     // Generate a list of user workers
-    let workers = generate_users(100);
+    let workers = 20;
 
     // Spawn tasks for both Twitter ingestion and fetching timelines
-    for user in workers {
+    for i in 1..workers {
         // Clone the necessary Arcs for each task
-        let user = Arc::new(user.clone());
         let repository = Arc::clone(&repositories);
 
         // Spawn an async task for Twitter ingestion
         set.spawn(async move {
-            workers::ingestion::twitter_ingestion(
-                user,
-                repository
-            ).await;
+            let _ = workers::ingestion::twitter_ingestion(i, repository).await;
         });
     }
 

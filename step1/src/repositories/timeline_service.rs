@@ -1,17 +1,14 @@
 use std::sync::Arc;
 
-
-use charybdis::types::Timeuuid;
+use anyhow::Result;
 use scylla::Session;
-use scylla::transport::errors::QueryError;
 
 use crate::models::timeline::Timeline;
-use crate::models::tweet::Tweet;
 
 pub trait TimelineServiceTrait {
-    async fn insert_to_timeline(&self, username: &str, tweet: &Tweet) -> Result<Timeline, QueryError>;
+    async fn insert_to_timeline(&self, timeline: &Timeline) -> Result<()>;
 
-    async fn get_timeline_by_username(&self, username: &str) -> Result<(), QueryError>;
+    async fn get_timeline_by_username(&self, username: &str) -> Result<()>;
 }
 
 pub struct TimelineService {
@@ -19,24 +16,7 @@ pub struct TimelineService {
 }
 
 impl TimelineServiceTrait for TimelineService {
-    async fn insert_to_timeline(&self, username: &str, tweet: &Tweet) -> Result<Timeline, QueryError> {
-        let random_liked = rand::random::<bool>();
-        let random_bookmarked = rand::random::<bool>();
-        let random_retweeted = rand::random::<bool>();
-
-        let timeline = Timeline {
-            username: username.to_string(),
-            tweet_id: tweet.tweet_id.clone(),
-            author: tweet.author.clone(),
-            text: tweet.author.clone(),
-            liked: random_liked,
-            bookmarked: random_bookmarked,
-            retweeted: random_retweeted,
-            created_at: Timeuuid::now_v1(&[1,2,3,4,5,6]),
-        };
-
-
-
+    async fn insert_to_timeline(&self, timeline: &Timeline) -> anyhow::Result<()> {
         let timeline_insert_query = format!(
             "INSERT INTO timeline (username, tweet_id, author, text, liked, bookmarked, retweeted, created_at) VALUES ('{}', {}, '{}', '{}', {}, {}, {}, {})",
             timeline.username,
@@ -46,29 +26,23 @@ impl TimelineServiceTrait for TimelineService {
             timeline.liked,
             timeline.bookmarked,
             timeline.retweeted,
-            tweet.created_at,
+            timeline.created_at,
         );
 
-        let session = self.connection.query(timeline_insert_query, &[]).await;
+        self.connection.query(timeline_insert_query, &[]).await?;
 
-        match session {
-            Ok(_) => Ok(timeline),
-            Err(e) => Err(e),
-        }
+        Ok(())
     }
 
-    async fn get_timeline_by_username(&self, username: &str) -> Result<(), QueryError> {
+    async fn get_timeline_by_username(&self, username: &str) -> anyhow::Result<()> {
 
         let timeline_select_query = format!(
             "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline WHERE username = '{}' LIMIT 50",
             username
         );
 
-        let timeline = self.connection.query(timeline_select_query, &[]).await;
+        self.connection.query(timeline_select_query, &[]).await?;
 
-        match timeline {
-            Ok(_res) => Ok(()),
-            Err(e) => Err(e),
-        }
+        Ok(())
     }
 }

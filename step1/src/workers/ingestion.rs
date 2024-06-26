@@ -1,32 +1,40 @@
-use std::fmt::format;
 use std::sync::Arc;
+use std::time::Instant;
 
-use fake::{Fake, Faker};
-use fake::faker::internet::en::Username;
-use fake::faker::lorem::en::Sentence;
-use log::info;
+use log::{debug, trace};
+
+use crate::models::timeline::Timeline;
+use crate::models::tweet::Tweet;
 
 use crate::repositories::Repositories;
-use crate::repositories::timeline_service::{TimelineService, TimelineServiceTrait};
-use crate::repositories::tweet_service::{TweetService, TweetServiceTrait};
-use crate::utils::pick_random_name;
+use crate::repositories::timeline_service::TimelineServiceTrait;
+use crate::repositories::tweet_service::TweetServiceTrait;
+use crate::workers::stats::Stats;
 
 pub async fn twitter_ingestion(
-    author: Arc<String>,
+    id: usize,
     repositories: Arc<Repositories>,
-) {
-    let text = format!("Follow {} ", author.clone().to_string());
-    loop {
-        let author: String = Username().fake();
-        let text: String = Sentence(5..15).fake();
-        let tweet_creation = repositories.tweet_service.create_tweet(&author, text.clone()).await;
+) -> anyhow::Result<()>{
+    debug!("worker # {} ready", id);
 
-        match tweet_creation {
-            Ok(tweet) => {
-                let _ = repositories.timeline_service.insert_to_timeline(&author, &tweet).await;
-                let _ = repositories.timeline_service.get_timeline_by_username(&author).await;
-            }
-            Err(e) => info!("Error creating tweet: {:?}", e)
-        }
+    let prefix = format!("#{}", id);
+    let mut s = Stats::new();
+
+    let mut tweet = Tweet::default();
+    let mut timeline = Timeline::default();
+
+    loop {
+        tweet.fake_tweet();
+        timeline.fake_timeline(tweet.clone());
+
+        repositories.tweet_service.create_tweet(&tweet).await?;
+        repositories.timeline_service.insert_to_timeline(&timeline).await?;
+        repositories.timeline_service.get_timeline_by_username(&timeline.username).await?;
+
+        let ts = Instant::now();
+        trace!("worker # {} insert/read {:?}", id, ts.elapsed());
+
+        s.record(ts);
+        s.print(&prefix);
     }
 }

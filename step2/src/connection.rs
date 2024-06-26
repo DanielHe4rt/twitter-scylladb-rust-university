@@ -2,19 +2,8 @@ use scylla::{Session, SessionBuilder};
 
 pub async fn setup_connection() -> Session {
 
-    // let policies = DefaultPolicy::builder()
-    //     .token_aware(true)
-    //     .build();
-    //
-    // let execution_profile = ExecutionProfile::builder()
-    //     .consistency(Consistency::Quorum)
-    //     .load_balancing_policy(policies)
-    //     .build();
-
     let session = SessionBuilder::new()
-        .known_nodes(vec!["node-0.aws-sa-east-1.37e013c7e0d4ae45432a.clusters.scylla.cloud", "node-1.aws-sa-east-1.37e013c7e0d4ae45432a.clusters.scylla.cloud", "node-2.aws-sa-east-1.37e013c7e0d4ae45432a.clusters.scylla.cloud"])
-        .user("scylla".to_string(), "W0xMPBaT48kNOvZ".to_string())
-        //.default_execution_profile_handle(execution_profile.into_handle())
+        .known_nodes(vec!["localhost:9042", "localhost:9040", "localhost:9041"])
         .build()
         .await
         .unwrap();

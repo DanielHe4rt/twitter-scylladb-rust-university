@@ -13,8 +13,7 @@ pub async fn setup_connection() -> Session {
         .build();
 
     let session = SessionBuilder::new()
-        .known_nodes(vec!["node-0.aws-sa-east-1.37e013c7e0d4ae45432a.clusters.scylla.cloud", "node-1.aws-sa-east-1.37e013c7e0d4ae45432a.clusters.scylla.cloud", "node-2.aws-sa-east-1.37e013c7e0d4ae45432a.clusters.scylla.cloud"])
-        .user("scylla".to_string(), "W0xMPBaT48kNOvZ".to_string())
+        .known_nodes(vec!["localhost:9040", "localhost:9041", "localhost:9042"])
         .default_execution_profile_handle(execution_profile.into_handle())
         .build()
         .await
