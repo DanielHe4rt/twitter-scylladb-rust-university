@@ -2,29 +2,24 @@ use std::sync::Arc;
 
 use log::info;
 
+use crate::repositories::Repositories;
 use crate::repositories::timeline_service::{TimelineService, TimelineServiceTrait};
 use crate::repositories::tweet_service::{TweetService, TweetServiceTrait};
+use crate::utils::pick_random_name;
 
 pub async fn twitter_ingestion(
     author: Arc<String>,
-    timeline_service: Arc<TimelineService>,
-    tweet_service: Arc<TweetService>,
+    repositories: Arc<Repositories>,
 ) {
-    let author = author.as_str();
+    let author = pick_random_name();
     let text = "very nice".to_string();
     loop {
-
-        let tweet_creation = tweet_service.create_tweet(&author, text.clone()).await;
+        let tweet_creation = repositories.tweet_service.create_tweet(&author, text.clone()).await;
 
         match tweet_creation {
             Ok(tweet) => {
-                info!("Tweet created by {}: {}", tweet.author, tweet.tweet_id);
-                let timeline = timeline_service.insert_to_timeline(&author, &tweet).await;
-
-                match timeline {
-                    Ok(timeline) => info!("Added to timeline {}: {}", timeline.username, timeline.tweet_id),
-                    Err(e) => info!("Error creating timeline: {:?}", e)
-                }
+                let _ = repositories.timeline_service.insert_to_timeline(&author, &tweet).await;
+                let _ = repositories.timeline_service.get_timeline_by_username(&author).await;
             }
             Err(e) => info!("Error creating tweet: {:?}", e)
         }

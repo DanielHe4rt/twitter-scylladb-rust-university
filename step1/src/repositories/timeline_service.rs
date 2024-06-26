@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
-use charybdis::QueryError;
+
 use charybdis::types::Timeuuid;
 use scylla::Session;
+use scylla::transport::errors::QueryError;
 
 use crate::models::timeline::Timeline;
 use crate::models::tweet::Tweet;
@@ -34,6 +35,8 @@ impl TimelineServiceTrait for TimelineService {
             created_at: Timeuuid::now_v1(&[1,2,3,4,5,6]),
         };
 
+
+
         let timeline_insert_query = format!(
             "INSERT INTO timeline (username, tweet_id, author, text, liked, bookmarked, retweeted, created_at) VALUES ('{}', {}, '{}', '{}', {}, {}, {}, {})",
             timeline.username,
@@ -45,7 +48,6 @@ impl TimelineServiceTrait for TimelineService {
             timeline.retweeted,
             tweet.created_at,
         );
-        println!("{}", timeline_insert_query);
 
         let session = self.connection.query(timeline_insert_query, &[]).await;
 

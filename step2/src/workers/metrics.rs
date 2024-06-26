@@ -11,9 +11,9 @@ pub async fn fetch_timelines(
         let fetch_timeline = timeline_service
             .get_timeline_by_username(username).await;
 
-        match fetch_timeline {
-            Ok(_) => info!("Timeline fetched!"),
-            Err(e) => info!("Error fetching timeline: {:?}", e)
-        }
+        // match fetch_timeline {
+        //     Ok(_) => info!("Timeline fetched!"),
+        //     Err(e) => info!("Error fetching timeline: {:?}", e)
+        // }
     }
 }

@@ -1,11 +1,11 @@
 use std::str::FromStr;
 use std::sync::Arc;
 
-use charybdis::QueryError;
 use charybdis::types::Timeuuid;
 use scylla::frame::value::CqlTimeuuid;
 use scylla::prepared_statement::PreparedStatement;
 use scylla::Session;
+use scylla::transport::errors::QueryError;
 use uuid::Uuid;
 
 use crate::models::tweet::Tweet;

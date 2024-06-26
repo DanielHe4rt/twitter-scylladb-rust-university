@@ -17,7 +17,7 @@ ALTER KEYSPACE system_traces WITH replication = { 'class' : 'NetworkTopologyStra
 
 
 ````cassandraql
-CREATE TABLE scylla_demo.tweets
+CREATE TABLE uni_twitter.tweets
 (
     tweet_id uuid PRIMARY KEY,
     time     timeuuid,
@@ -27,7 +27,7 @@ CREATE TABLE scylla_demo.tweets
 ````
 
 ````cassandraql
-create table scylla_demo.timeline
+create table uni_twitter.timeline
 (
     username   text,
     tweet_id   uuid,

@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use charybdis::QueryError;
 use charybdis::types::Timeuuid;
 use scylla::Session;
+use scylla::transport::errors::QueryError;
 use uuid::Uuid;
 
 use crate::models::tweet::Tweet;
@@ -17,7 +17,6 @@ pub struct TweetService {
 
 impl TweetServiceTrait for TweetService {
     async fn create_tweet(&self, author: &str, text: String) -> Result<Tweet, QueryError> {
-
         let tweet = Tweet {
             tweet_id: Uuid::new_v4(),
             author: author.to_string(),
@@ -33,7 +32,6 @@ impl TweetServiceTrait for TweetService {
             tweet.created_at
         );
 
-        println!("{}", tweet_insert_query);
 
         let session = self.connection.query(tweet_insert_query, &[]).await;
 

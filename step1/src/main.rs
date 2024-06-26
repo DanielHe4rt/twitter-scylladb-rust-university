@@ -2,6 +2,7 @@ use std::sync::Arc;
 use tokio::task::JoinSet;
 
 use crate::connection::setup_connection;
+use crate::repositories::Repositories;
 use crate::repositories::timeline_service::TimelineService;
 use crate::repositories::tweet_service::TweetService;
 use crate::utils::generate_users;
@@ -20,38 +21,26 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // Setup database connections for TweetService and TimelineService
     let connection = Arc::new(setup_connection().await);
-    let tweet_service = Arc::new(TweetService { connection: Arc::clone(&connection) });
-    let timeline_service = Arc::new(TimelineService { connection: Arc::clone(&connection) });
+    let repositories = Arc::new(Repositories::new(Arc::clone(&connection)).await);
+
 
     // Initialize a JoinSet to manage multiple asynchronous tasks
     let mut set = JoinSet::new();
 
     // Generate a list of user workers
-    let workers = generate_users(10);
+    let workers = generate_users(100);
 
     // Spawn tasks for both Twitter ingestion and fetching timelines
     for user in workers {
         // Clone the necessary Arcs for each task
         let user = Arc::new(user.clone());
-        let tweet_service_ingestion = Arc::clone(&tweet_service);
-        let timeline_service_ingestion = Arc::clone(&timeline_service);
-        let user_metrics = Arc::clone(&user);
-        let timeline_service_metrics = Arc::clone(&timeline_service);
+        let repository = Arc::clone(&repositories);
 
         // Spawn an async task for Twitter ingestion
         set.spawn(async move {
             workers::ingestion::twitter_ingestion(
                 user,
-                timeline_service_ingestion,
-                tweet_service_ingestion,
-            ).await;
-        });
-
-        // Spawn an async task for fetching timelines
-        set.spawn(async move {
-            workers::metrics::fetch_timelines(
-                user_metrics,
-                timeline_service_metrics,
+                repository
             ).await;
         });
     }

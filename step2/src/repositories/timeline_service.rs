@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
-use charybdis::QueryError;
 use charybdis::types::Timeuuid;
 use scylla::prepared_statement::PreparedStatement;
 use scylla::Session;
+use scylla::transport::errors::QueryError;
 
 use crate::models::timeline::Timeline;
 use crate::models::tweet::Tweet;
@@ -22,7 +22,7 @@ pub struct TimelineService {
 
 const INSERT_TIMELINE_QUERY: &str = "INSERT INTO timeline (username, tweet_id, author, text, liked, bookmarked, retweeted, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-const SELECT_TIMELINE_QUERY: &str = "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline WHERE username = ? LIMIT 50";
+const SELECT_TIMELINE_QUERY: &str = "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline WHERE username = ?";
 impl TimelineService {
     pub async fn new(connection: Arc<Session>) -> Self {
         let timeline_insert_query = connection
@@ -30,10 +30,12 @@ impl TimelineService {
             .await
             .unwrap();
 
-        let timeline_select_query = connection
+        let mut timeline_select_query = connection
             .prepare(SELECT_TIMELINE_QUERY)
             .await
             .unwrap();
+
+        timeline_select_query.set_page_size(50);
 
         Self {
             connection,
