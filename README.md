@@ -64,9 +64,6 @@ WHERE
 
 `````cassandraql
 
-SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline_liked  WHERE 
-    username = 'danielhe4rt' ORDER BY created_at DESC ALLOW FILTERING ;
-
 create materialized view timeline_liked as
 select tweet_id, username, author, author, text, liked, bookmarked, retweeted, created_at
 from timeline
@@ -77,12 +74,4 @@ where tweet_id is not null
 primary key ((username, liked), created_at, tweet_id)
 WITH CLUSTERING ORDER BY (created_at DESC);
 
-CREATE MATERIALIZED VIEW first_timeline_tweets AS
-SELECT tweet_id, username, author, author, text, created_at
-FROM timeline
-WHERE tweet_id IS NOT null
-  AND username IS NOT null
-  AND created_at IS NOT null
-PRIMARY KEY (username, created_at, tweet_id)
-WITH CLUSTERING ORDER BY (created_at ASC);
 `````

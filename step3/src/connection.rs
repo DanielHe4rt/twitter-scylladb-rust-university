@@ -1,8 +1,9 @@
 use scylla::{Session, SessionBuilder};
 
 pub async fn setup_connection() -> Session {
+
     let session = SessionBuilder::new()
-        .known_nodes(vec!["localhost:9042"])
+        .known_nodes(vec!["localhost:9042", "localhost:9040", "localhost:9041"])
         .build()
         .await
         .unwrap();
