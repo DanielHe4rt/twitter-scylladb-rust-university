@@ -24,15 +24,18 @@ const INSERT_TIMELINE_QUERY: &str = "INSERT INTO timeline (username, tweet_id, a
 
 const SELECT_TIMELINE_QUERY: &str = "SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline WHERE username = ? LIMIT 50";
 
-const SELECT_LIKED_TIMELINE_QUERY: &str = "SELECT \
-                        username, tweet_id, author, text, liked, bookmarked, retweeted, created_at \
-                   FROM \
-                        timeline \
-                   WHERE \
-                        username = ? AND \
-                        liked = ? \
-                   LIMIT 50
-                   ALLOW FILTERING";
+const SELECT_LIKED_TIMELINE_QUERY: &str = "
+    SELECT
+        username, tweet_id, author, text, liked, bookmarked, retweeted, created_at
+    FROM
+        timeline
+    WHERE
+        username = ? AND
+        liked = ?
+   LIMIT 50
+   ALLOW FILTERING
+";
+
 
 impl TimelineService {
     pub async fn new(connection: Arc<Session>) -> Self {
