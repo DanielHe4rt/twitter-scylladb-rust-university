@@ -1,29 +1,40 @@
 use std::sync::Arc;
+use std::time::Instant;
 
-use crate::repositories::timeline_service::{TimelineService, TimelineServiceTrait};
-use crate::repositories::tweet_service::{TweetService, TweetServiceTrait};
+use log::{debug, trace};
+
+use crate::models::timeline::Timeline;
+use crate::models::tweet::Tweet;
+use crate::repositories::Repositories;
+use crate::repositories::timeline_service::TimelineServiceTrait;
+use crate::repositories::tweet_service::TweetServiceTrait;
+use crate::workers::stats::Stats;
 
 pub async fn twitter_ingestion(
-    timeline_service: Arc<TimelineService>,
-    tweet_service: Arc<TweetService>,
-) {
-    let author = "danielhe4rt";
-    let text = "very nice".to_string();
+    id: usize,
+    repositories: Arc<Repositories>,
+) -> anyhow::Result<()>{
+    debug!("worker # {} ready", id);
+
+    let prefix = format!("#{}", id);
+    let mut s = Stats::new();
+
+    let mut tweet = Tweet::default();
+    let mut timeline = Timeline::default();
+
     loop {
+        tweet.fake_tweet();
+        timeline.fake_timeline(tweet.clone());
 
-        let tweet_creation = tweet_service.create_tweet(&author, &text).await;
+        repositories.tweet_service.create_tweet(&tweet).await?;
+        repositories.timeline_service.insert_to_timeline(&timeline).await?;
+        repositories.timeline_service.get_timeline_by_username(&timeline.username).await?;
+        repositories.timeline_service.get_liked_timeline_by_username(&timeline.username).await?;
 
-        match tweet_creation {
-            Ok(tweet) => {
-                println!("Tweet created!");
-                let timeline = timeline_service.insert_to_timeline(&tweet).await;
+        let ts = Instant::now();
+        trace!("worker # {} insert/read {:?}", id, ts.elapsed());
 
-                match timeline {
-                    Ok(timeline) => println!("Timeline created!"),
-                    Err(e) => println!("Error creating timeline: {:?}", e)
-                }
-            }
-            Err(e) => println!("Error creating tweet: {:?}", e)
-        }
+        s.record(ts);
+        s.print(&prefix);
     }
 }

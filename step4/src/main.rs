@@ -1,35 +1,44 @@
 use std::sync::Arc;
+use tokio::task::JoinSet;
 
 use crate::connection::setup_connection;
-use crate::repositories::timeline_service::TimelineService;
-use crate::repositories::tweet_service::TweetService;
+use crate::repositories::Repositories;
 
 mod models;
 mod connection;
-mod utils;
 mod repositories;
 mod workers;
+mod logger;
 
 #[tokio::main]
-async fn main() -> Result<(), anyerror::AnyError> {
-    let tweet_service = Arc::new(TweetService { connection: Arc::new(setup_connection().await) });
-    let timeline_service = Arc::new(TimelineService { connection: Arc::new(setup_connection().await) });
-    let timeline_service2 = Arc::clone(&timeline_service);
+async fn main() -> Result<(), anyhow::Error> {
+    // Initialize the logger
+    logger::init();
 
-    let ingestion_task = tokio::spawn(async move {
-        workers::ingestion::twitter_ingestion(
-            Arc::clone(&timeline_service),
-            Arc::clone(&tweet_service),
-        ).await;
-    });
+    // Setup database connections for TweetService and TimelineService
+    let connection = Arc::new(setup_connection().await);
+    let repositories = Arc::new(Repositories::new(Arc::clone(&connection)).await);
 
-    let metrics_task = tokio::spawn(async move {
-        workers::metrics::fetch_timelines(
-            timeline_service2,
-        ).await;
-    });
+    // Initialize a JoinSet to manage multiple asynchronous tasks
+    let mut set = JoinSet::new();
 
-    tokio::try_join!(ingestion_task, metrics_task).unwrap();
+    // Generate a list of user workers
+    let workers = 20;
+
+    // Spawn tasks for both Twitter ingestion and fetching timelines
+    for i in 1..workers {
+        // Clone the necessary Arcs for each task
+        let repository = Arc::clone(&repositories);
+
+        // Spawn an async task for Twitter ingestion
+        set.spawn(async move {
+            let _ = workers::ingestion::twitter_ingestion(i, repository).await;
+        });
+    }
+
+    while let Some(res) = set.join_next().await {
+        res?;
+    }
 
     Ok(())
 }
