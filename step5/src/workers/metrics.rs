@@ -6,8 +6,10 @@ pub async fn fetch_timelines(
     timeline_service: Arc<TimelineService>,
 ) {
     loop {
-        let fetch_timeline = timeline_service
-            .get_liked_timeline_by_username("danielhe4rt").await;
+        let _ = timeline_service
+            .get_timeline_by_username("danielhe4rt").await;
+
+        let fetch_timeline = timeline_service.get_liked_timeline_by_username("danielhe4rt").await;
 
         match fetch_timeline {
             Ok(_) => println!("Timeline fetched!"),
