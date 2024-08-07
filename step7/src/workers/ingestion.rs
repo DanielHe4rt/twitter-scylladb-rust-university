@@ -1,30 +1,41 @@
 use std::sync::Arc;
-use rand::prelude::SliceRandom;
+use std::time::Instant;
 
-use crate::repositories::timeline_service::{TimelineService, TimelineServiceTrait};
-use crate::repositories::tweet_service::{TweetService, TweetServiceTrait};
+use log::{debug, trace};
+
+use crate::models::timeline::Timeline;
+use crate::models::tweet::Tweet;
+use crate::repositories::Repositories;
+use crate::repositories::timeline_service::TimelineServiceTrait;
+use crate::repositories::tweet_service::TweetServiceTrait;
+use crate::workers::stats::Stats;
 
 pub async fn twitter_ingestion(
-    timeline_service: Arc<TimelineService>,
-    tweet_service: Arc<TweetService>,
-    users: Arc<Vec<String>>
-) {
+    id: usize,
+    repositories: Arc<Repositories>,
+) -> anyhow::Result<()>{
+    debug!("worker # {} ready", id);
+
+    let prefix = format!("#{}", id);
+    let mut s = Stats::new();
+
+    let mut tweet = Tweet::default();
+    let mut timeline = Timeline::default();
+
     loop {
-        let author = users.choose(&mut rand::thread_rng()).unwrap();
-        let text = "very nice".to_string();
-        let tweet_creation = tweet_service.create_tweet(author.to_string(), text.clone()).await;
+        tweet.fake_tweet();
+        timeline.fake_timeline(tweet.clone());
 
-        match tweet_creation {
-            Ok(tweet) => {
-                println!("Tweet created!");
-                let timeline = timeline_service.insert_to_timeline(&tweet).await;
+        repositories.tweet_service.create_tweet(&tweet).await?;
+        repositories.timeline_service.insert_to_timeline(&timeline).await?;
+        repositories.timeline_service.get_timeline_by_username(&timeline.username).await?;
+        repositories.timeline_service.get_liked_timeline_by_username(&timeline.username).await?;
+        repositories.timeline_service.get_first_liked_tweets(&timeline.username).await?;
 
-                match timeline {
-                    Ok(timeline) => println!("Timeline created!"),
-                    Err(e) => println!("Error creating timeline: {:?}", e)
-                }
-            }
-            Err(e) => println!("Error creating tweet: {:?}", e)
-        }
+        let ts = Instant::now();
+        trace!("worker # {} insert/read {:?}", id, ts.elapsed());
+
+        s.record(ts);
+        s.print(&prefix);
     }
 }

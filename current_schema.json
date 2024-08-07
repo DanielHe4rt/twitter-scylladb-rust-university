@@ -1,6 +1,213 @@
 {
-  "tables": {},
+  "tables": {
+    "tweets": {
+      "fields": [
+        [
+          "author",
+          "text",
+          false
+        ],
+        [
+          "created_at",
+          "timeuuid",
+          false
+        ],
+        [
+          "text",
+          "text",
+          false
+        ],
+        [
+          "tweet_id",
+          "uuid",
+          false
+        ]
+      ],
+      "field_names": [
+        "created_at",
+        "author",
+        "tweet_id",
+        "text"
+      ],
+      "types_by_name": {
+        "author": "text",
+        "created_at": "timeuuid",
+        "text": "text",
+        "tweet_id": "uuid"
+      },
+      "type_name": "",
+      "table_name": "",
+      "base_table": "",
+      "partition_keys": [
+        "tweet_id"
+      ],
+      "clustering_keys": [
+        "created_at"
+      ],
+      "static_columns": [],
+      "global_secondary_indexes": [],
+      "local_secondary_indexes": [],
+      "table_options": null
+    },
+    "timeline": {
+      "fields": [
+        [
+          "author",
+          "text",
+          false
+        ],
+        [
+          "bookmarked",
+          "boolean",
+          false
+        ],
+        [
+          "created_at",
+          "timeuuid",
+          false
+        ],
+        [
+          "liked",
+          "boolean",
+          false
+        ],
+        [
+          "retweeted",
+          "boolean",
+          false
+        ],
+        [
+          "text",
+          "text",
+          false
+        ],
+        [
+          "tweet_id",
+          "uuid",
+          false
+        ],
+        [
+          "username",
+          "text",
+          false
+        ]
+      ],
+      "field_names": [
+        "created_at",
+        "bookmarked",
+        "text",
+        "username",
+        "liked",
+        "tweet_id",
+        "author",
+        "retweeted"
+      ],
+      "types_by_name": {
+        "liked": "boolean",
+        "text": "text",
+        "retweeted": "boolean",
+        "author": "text",
+        "tweet_id": "uuid",
+        "created_at": "timeuuid",
+        "username": "text",
+        "bookmarked": "boolean"
+      },
+      "type_name": "",
+      "table_name": "",
+      "base_table": "",
+      "partition_keys": [
+        "username"
+      ],
+      "clustering_keys": [
+        "created_at",
+        "tweet_id"
+      ],
+      "static_columns": [],
+      "global_secondary_indexes": [],
+      "local_secondary_indexes": [],
+      "table_options": null
+    }
+  },
   "udts": {},
-  "materialized_views": {},
+  "materialized_views": {
+    "liked_timeline": {
+      "fields": [
+        [
+          "author",
+          "text",
+          false
+        ],
+        [
+          "bookmarked",
+          "boolean",
+          false
+        ],
+        [
+          "created_at",
+          "timeuuid",
+          false
+        ],
+        [
+          "liked",
+          "boolean",
+          false
+        ],
+        [
+          "retweeted",
+          "boolean",
+          false
+        ],
+        [
+          "text",
+          "text",
+          false
+        ],
+        [
+          "tweet_id",
+          "uuid",
+          false
+        ],
+        [
+          "username",
+          "text",
+          false
+        ]
+      ],
+      "field_names": [
+        "username",
+        "author",
+        "text",
+        "liked",
+        "bookmarked",
+        "created_at",
+        "retweeted",
+        "tweet_id"
+      ],
+      "types_by_name": {
+        "tweet_id": "uuid",
+        "liked": "boolean",
+        "bookmarked": "boolean",
+        "created_at": "timeuuid",
+        "username": "text",
+        "text": "text",
+        "retweeted": "boolean",
+        "author": "text"
+      },
+      "type_name": "",
+      "table_name": "",
+      "base_table": "",
+      "partition_keys": [
+        "username"
+      ],
+      "clustering_keys": [
+        "created_at",
+        "tweet_id"
+      ],
+      "static_columns": [],
+      "global_secondary_indexes": [],
+      "local_secondary_indexes": [],
+      "table_options": null
+    }
+  },
   "keyspace_name": "uni_twitter"
 }

@@ -74,4 +74,10 @@ where tweet_id is not null
 primary key ((username, liked), created_at, tweet_id)
 WITH CLUSTERING ORDER BY (created_at DESC);
 
+CREATE MATERIALIZED VIEW uni_twitter.first_timeline_tweets AS
+    SELECT username, created_at, tweet_id, author, bookmarked, liked, retweeted, text
+    FROM uni_twitter.timeline
+    WHERE username IS NOT null AND created_at IS NOT null AND tweet_id IS NOT null AND liked IS NOT null
+    PRIMARY KEY (username, created_at, tweet_id)
+    WITH CLUSTERING ORDER BY (created_at ASC);
 `````
