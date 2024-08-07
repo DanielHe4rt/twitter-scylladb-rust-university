@@ -2,11 +2,11 @@
 
 resolver = "2"
 members = [
-    "step1",
-    "step2",
-    "step3",
-    "step4",
-    "step5",
-    "step6",
-    "step7",
+    "lessons/step1",
+    "lessons/step2",
+    "lessons/step3",
+    "lessons/step4",
+    "lessons/step5",
+    "lessons/step6",
+    "lessons/step7",
 ]
