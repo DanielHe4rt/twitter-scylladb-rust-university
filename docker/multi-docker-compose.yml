@@ -1,0 +1,20 @@
+services:
+  scylla-dc1-node1: &node-main
+    image: scylladb/scylla:6.0.2
+    container_name: scylla-dc1-node1
+    restart: on-failure
+    command:
+      [
+        '--smp=1',
+        '--memory=1G',
+        '--overprovisioned=1',
+        '--seeds=scylla-dc1-node1,scylla-dc2-node1',
+      ]
+    ports:
+      - 9042:9042
+    networks:
+      scylla-dc:
+        ipv4_address: 10.10.7.2
+    volumes:
+      - ./conf/scylla.yaml:/etc/scylla/scylla.yaml:rw
+      - ./conf/rackdc1.properties:/etc/scylla/cassandra-rackdc.properties:rw

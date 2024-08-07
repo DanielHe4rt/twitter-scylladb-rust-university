@@ -1,0 +1,15 @@
+services:
+  ws-scylla-1: &scylla-main
+    image: scylladb/scylla:6.0.2
+    container_name: ws-scylla-1
+    command: [ '--smp=1', '--memory=1GB', '--overprovisioned=1', '--developer-mode=1', '--seeds=ws-scylla-1' ]
+    ports:
+      - '9042:9042'
+    networks:
+      scylla-dc:
+    healthcheck:
+      test: [ 'CMD-SHELL', 'cqlsh -e "SHOW VERSION" || exit 1' ]
+      interval: 15s
+      timeout: 30s
+      retries: 15
+      start_period: 30s
