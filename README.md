@@ -40,7 +40,6 @@ steps, starting with a simple application and progressively optimizing it using 
 
 - **Rust**: The programming language used for the application.
 - **Docker**: Used to run ScyllaDB in a containerized environment.
-- **CQL**: Cassandra Query Language used to interact with ScyllaDB.
 - **Scylla Monitoring Stack**: Used to monitor and visualize ScyllaDB metrics with Grafana and Prometheus.
 
 ## Getting Started
