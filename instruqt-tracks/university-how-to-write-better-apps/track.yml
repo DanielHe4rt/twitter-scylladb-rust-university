@@ -1,0 +1,29 @@
+slug: university-how-to-write-better-apps
+id: lvkz6fljy98o
+title: University - How to Write Better Apps
+teaser: This is a IoT application. Try it yourself and see how you can use ScyllaDB
+  to build low-latency high-performance Time Series applications.
+description: https://github.com/scylladb/carepet
+icon: ./assets/rust-orm.png
+tags:
+- rust
+- iot
+owner: scylladb
+developers:
+- daniel.reis@scylladb.com
+idle_timeout: 300
+timelimit: 3600
+lab_config:
+  overlay: false
+  width: 33
+  position: right
+  feedback_recap_enabled: true
+  feedback_tab_enabled: false
+  loadingMessages: true
+  lab_v2: true
+  theme:
+    name: original
+  override_challenge_layout: true
+  hideStopButton: false
+  default_layout: AssignmentRight
+checksum: "6124930297065928668"

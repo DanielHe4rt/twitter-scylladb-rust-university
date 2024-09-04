@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cd $SOURCE_DIR
+
+docker-compose up -d
+
+RESPONSE=$?
+
+if [ $RESPONSE -ne 0 ]; then
+    fail-message "Failed to start the docker-compose services"
+    exit 1
+fi
+
+echo "Docker-compose services started successfully"
+exit 0

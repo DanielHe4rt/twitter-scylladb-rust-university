@@ -1,0 +1,13 @@
+#!/bin/bash
+
+containers=("carepet-node1" "carepet-node2" "carepet-node3")
+
+# Loop through each container and check if it is running
+for container_name in "${containers[@]}"; do
+    if docker ps --filter "name=$container_name" | grep -q $container_name; then
+        echo "The Docker container '$container_name' is running."
+    else
+        echo "FAIL: Your challenge failed because the Docker container '$container_name' is not running or does not exist."
+        exit 1
+    fi
+done

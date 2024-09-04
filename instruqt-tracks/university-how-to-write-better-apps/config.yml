@@ -1,0 +1,10 @@
+version: "3"
+virtualmachines:
+- name: scylladb
+  image: instruqt/docker-2010
+  environment:
+    SOURCE_DIR: /root/carepet-rust
+    TEST: daniel
+  machine_type: n1-highcpu-16
+  allow_external_ingress:
+  - high-ports

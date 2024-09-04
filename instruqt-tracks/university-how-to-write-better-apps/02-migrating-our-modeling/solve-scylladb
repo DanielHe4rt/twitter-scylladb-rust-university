@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# This script runs when the platform solve the challenge.
+#
+# The platform determines if the script was successful using the exit code of this
+# script. If the exit code is not 0, the script fails. 
+#
+
+cd $SOURCE_DIR
+cargo run migrate
+
+EXIT_CODE=$?
+
+# Print the exit code of the docker exec command
+echo "The exit code of the docker exec command is: $EXIT_CODE"
+
+# Optionally, handle the exit code
+if [ $EXIT_CODE -ne 0 ]; then
+	echo "Command failed with exit code $EXIT_CODE"
+	fail-message "Migrate command failed with exit code $EXIT_CODE."
+else
+	echo "Command succeeded"
+fi
