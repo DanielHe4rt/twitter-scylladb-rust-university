@@ -7,7 +7,7 @@
 # Update and install necessary packages
 echo "Updating and installing build-essential..."
 sudo apt update -y
-sudo apt install build-essential screen -y
+sudo apt install build-essential screen libssl-dev pkg-config -y
 
 # Create Docker network
 docker network create --driver bridge --subnet 10.9.8.0/24 --gateway 10.9.8.1 --opt com.docker.network.bridge.name=scylla-dc --ipv6=false scylla-dc &
@@ -18,7 +18,7 @@ images=(
     "grafana/grafana:11.1.4"
     "scylladb/scylla:6.1"
 )
-
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y &
 for image in "${images[@]}"; do
     docker pull --quiet $image &
 done
@@ -60,7 +60,6 @@ EOF
 ./start-all.sh -v 6.0 -s prometheus/scylla_servers.yml --no-loki --no-alertmanager --no-renderer -D "--network scylla-dc" &
 
 # Install Rust in the background
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y &
 wait  # Wait for Rust to install
 
 source ~/.bashrc
@@ -85,3 +84,13 @@ echo fs.aio-max-nr=1048576 | sudo tee /etc/sysctl.d/41-aio_max_nr.conf && sudo s
 echo "Script execution completed."
 
 exit 0
+
+response = requests.get('https://ifconfig.me')
+
+# Check the status code
+if response.status_code == 200:
+    print("Success!")
+    print(response.json())  # If the response is in JSON format
+else:
+    print(f"Failed with status code: {response.status_code}")
+
