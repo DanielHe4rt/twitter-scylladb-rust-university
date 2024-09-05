@@ -1,4 +1,4 @@
-base_keyspace = "DROP KEYSPACE uni_twitter; CREATE KEYSPACE IF NOT EXISTS uni_twitter WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': '3'}  AND durable_writes = true AND tablets = {'enabled': false}"
+base_keyspace = "DROP KEYSPACE IF EXISTS uni_twitter; CREATE KEYSPACE IF NOT EXISTS uni_twitter WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': '3'}  AND durable_writes = true AND tablets = {'enabled': false}"
 
 
 .PHONY: setup-multi-dc

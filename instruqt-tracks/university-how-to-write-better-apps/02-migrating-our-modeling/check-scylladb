@@ -1,25 +1,77 @@
-#!/bin/bash
+#!/usr/bin/env python
 
-#
-# This script runs when the platform check the challenge.
-#
-# The platform determines if the script was successful using the exit code of this
-# script. If the exit code is not 0, the script fails. 
-#
+# Instruqt Track Script
+# Goal: Check Prometheus for specific metrics/gauges. If any gauge value is greater than zero,
+# it will execute a fail message and stop the script. If all values are zero, the script will finish successfully.
 
-docker exec carepet-node1 cqlsh -e "USE carepet"
-EXIT_CODE=$?
+import requests
+import subprocess
+import sys
 
-# Print the exit code of the docker exec command
-echo "The exit code of the docker exec command is: $EXIT_CODE"
+# List of metrics to check
+payloads = [
+    (
+        'non-prepared-queries',
+        'sum(cql:non_system_prepared1m)',
+        'Are you sure that all queries are running under Prepared Statement? (Tip: check the "get_timeline_by_username" function.)'
+    ),
+    (
+        'consistency-level',
+        'sum(rate(scylla_query_processor_queries{consistency_level="QUORUM"}[30s]))',
+        'You\'re running Multi-DC but are still using CL=Quorum. Wouldn\'t it be better to only be consistent under the selected datacenter?'
+    ),
+    (
+        'unpaged-queries',
+        'sum(rate(scylla_cql_unpaged_select_queries[30s])) - sum(rate(scylla_cql_unpaged_select_queries_per_ks{ks="system",cluster="cluster1", dc=~".*", shard=~".*"}[30s]))',
+        'You have huge timelines being fetched. Please make sure to set a page size for every SELECT statement.'
+    ),
+    (
+        'reverse-cql',
+        'sum(rate(scylla_cql_reverse_queries[30s]))',
+        'One of your queries is using reverse clustering order. Please remove or denormalize it.'
+    ),
+    (
+        'allow-filtering',
+        'sum(rate(scylla_cql_filtered_read_requests[30s]))',
+        'One of your queries is using ALLOW FILTERING and slowing the entire cluster. Please remove or denormalize it.'
+    )
+]
 
-# Optionally, handle the exit code
-if [ $EXIT_CODE -ne 0 ]; then
-	echo "Command failed with exit code $EXIT_CODE"
-    fail-message "Did you run the migrate command?"
-    exit 1
-	# Perform any error handling or recovery here
-else
-	echo "Command succeeded"
-fi
+PROMETHEUS_URL = "http://localhost:9090/api/v1/query"
+
+# Function to check each metric
+def check_gauge(key, query, message):
+    try:
+        response = requests.get(f"{PROMETHEUS_URL}?query={query}")
+        response.raise_for_status()  # Check if the request was successful
+        data = response.json()
+
+        # Ensure that we have a valid result
+        if not data['data']['result']:
+            print(f"No result for query '{key}'. Moving on...")
+            return True  # No result implies no error
+
+        gauge_value = float(data['data']['result'][0]['value'][1])
+
+        # If the gauge value is greater than zero, fail the task with a message
+        if gauge_value > 0:
+            print(f"Gauge '{key}' is not zero: {gauge_value}. Failing with message.")
+            subprocess.call(f'fail-message "{message}" || exit 1', shell=True)
+            sys.exit(1)  # Exit the script after failure
+        else:
+            print(f"Gauge '{key}' is zero: {gauge_value}. Moving on...")
+
+    except (requests.exceptions.RequestException, KeyError, IndexError, ValueError) as e:
+        print(f"Error occurred while checking gauge '{key}': {e}. Skipping this gauge.")
+        return False
+
+# Iterate over all payloads and check their gauges
+for payload in payloads:
+    key, query, message = payload
+    if not check_gauge(key, query, message):
+        continue  # Skip to next payload if an error occurred
+
+# If all gauges are cleared, finish successfully
+print("All gauges clear. Finishing the lab...")
+sys.exit(0)
 

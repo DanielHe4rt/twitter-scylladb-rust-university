@@ -37,18 +37,8 @@ Starting the Clusters
 Run ScyllaDB in Docker.  Run this command in the [terminal](tab-0) tab:
 
 ```run
-docker run --name carepet-node1 --network ws-scylla -p "9042:9042" -d scylladb/scylla:6.0.1 \
-  --overprovisioned 1 \
-  --smp 1
+cd university
 
-docker run --name carepet-node2 --network ws-scylla -d scylladb/scylla:6.0.1 \
-  --overprovisioned 1 --smp 1 \
-  --seeds="carepet-node1"
-
-docker run --name carepet-node3 --network ws-scylla -d scylladb/scylla:6.0.1 \
-  --overprovisioned 1 \
-  --smp 1 \
-  --seeds="carepet-node1"
 ```
 
 To check the status of your node, copy and run this command in the [terminal](tab-0) tab:

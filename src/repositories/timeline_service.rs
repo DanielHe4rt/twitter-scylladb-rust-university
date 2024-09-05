@@ -51,12 +51,10 @@ impl TimelineService {
             .await
             .unwrap();
 
-        let mut timeline_select_query = connection
+        let timeline_select_query = connection
             .prepare(SELECT_TIMELINE_QUERY)
             .await
             .unwrap();
-
-        timeline_select_query.set_page_size(50);
 
         let mut liked_timeline_query = connection
             .prepare(SELECT_LIKED_TIMELINE_QUERY)
