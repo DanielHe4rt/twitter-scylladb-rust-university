@@ -12,8 +12,7 @@ services:
     ports:
       - "9042:9042"
     networks:
-      scylla-dc:
-        ipv4_address: 10.9.8.2
+      - scylla-dc
     volumes:
       - scylla-1:/var/lib/scylla
       - ./conf/rack-dc1.properties:/etc/scylla/cassandra-rackdc.properties:rw
@@ -26,8 +25,7 @@ services:
       - scylla-2:/var/lib/scylla
       - ./conf/rack-dc1.properties:/etc/scylla/cassandra-rackdc.properties:rw
     networks:
-      scylla-dc:
-        ipv4_address: 10.9.8.3
+      - scylla-dc
   scylla-dc1-n3:
     <<: *scylla-main-dc1
     container_name: scylla-dc1-n3
@@ -37,8 +35,7 @@ services:
     ports:
       - "9044:9042"
     networks:
-      scylla-dc:
-        ipv4_address: 10.9.8.4
+      - scylla-dc
   scylla-dc2-n1: &scylla-main-dc2
     image: scylladb/scylla:6.1.1
     container_name: scylla-dc2-n1
@@ -52,8 +49,7 @@ services:
     ports:
       - "9045:9042"
     networks:
-      scylla-dc:
-        ipv4_address: 10.9.8.5
+      - scylla-dc
     volumes:
       - scylla-4:/var/lib/scylla
       - ./conf/rack-dc2.properties:/etc/scylla/cassandra-rackdc.properties:rw
@@ -66,8 +62,7 @@ services:
     ports:
       - "9046:9042"
     networks:
-      scylla-dc:
-        ipv4_address: 10.9.8.6
+      - scylla-dc
   scylla-dc2-n3:
     <<: *scylla-main-dc2
     container_name: scylla-dc2-n3
@@ -77,8 +72,7 @@ services:
     ports:
       - "9047:9042"
     networks:
-      scylla-dc:
-        ipv4_address: 10.9.8.7
+      - scylla-dc
 volumes:
   scylla-1:
     name: scylla-1

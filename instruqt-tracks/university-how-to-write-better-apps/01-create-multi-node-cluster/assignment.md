@@ -23,7 +23,7 @@ tabs:
   title: Editor
   type: code
   hostname: scylladb
-  path: carepet-rust/
+  path: university/
 difficulty: ""
 ---
 

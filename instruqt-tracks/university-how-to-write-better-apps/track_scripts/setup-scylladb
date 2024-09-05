@@ -8,7 +8,13 @@
 echo "Updating and installing build-essential..."
 sudo apt update -y
 sudo apt install build-essential screen -y
-docker network create --driver bridge ws-scylla
+docker network create \
+  --driver bridge \
+  --subnet 10.9.8.0/24 \
+  --gateway 10.9.8.1 \
+  --opt com.docker.network.bridge.name=scylla-dc \
+  --ipv6=false \
+  scylla-dc
 
 images=(
     "scylladb/scylla:6.1"
@@ -33,7 +39,7 @@ replace_query() {
 download_image() {
     image=$1
     echo "Downloading $image..."
-    docker pull $image &
+    docker pull --quiet $image &
 }
 
 # Loop through the images array and download each one in the background
@@ -53,33 +59,39 @@ git clone https://github.com/scylladb/scylla-monitoring.git
 cd scylla-monitoring
 git checkout branch-5.8
 
-MONITORING_YML="https://gist.githubusercontent.com/DanielHe4rt/ea49140ed78153ba4a34f141c5e98422/raw/2c1db20fc32c00c769b91fd7e1135e525a42d85b/scylla_servers.yml"
+cat << EOF > prometheus/scylla_servers.yml
+- targets:
+       - scylla-dc1-n1
+       - scylla-dc1-n2
+       - scylla-dc1-n3
+  labels:
+       cluster: cluster1
+       dc: dc1
+- targets:
+       - scylla-dc2-n1
+       - scylla-dc2-n2
+       - scylla-dc2-n3
+  labels:
+       cluster: cluster1
+       dc: dc2
+EOF
 
-wget --tries=3 --waitretry=3 $MONITORING_YML --output-document=prometheus/scylla_servers.yml
-
-./start-all.sh -v 6.0 -s prometheus/scylla_servers.yml --no-loki --no-alertmanager --no-renderer -D "--network ws-scylla"
+./start-all.sh -v 6.0 -s prometheus/scylla_servers.yml --no-loki --no-alertmanager --no-renderer -D "--network scylla-dc"
 
 # Install Rust
-echo "Installing Rust..."
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 source ~/.bashrc
 
 # Clone the carepet-rust repository
-echo "Cloning carepet-rust repository..."
 cd /root
-git clone https://github.com/DanielHe4rt/twitter-scylladb-rust-university.git
+git clone https://github.com/DanielHe4rt/twitter-scylladb-rust-university.git university
 
 # Build the carepet-rust project
 echo "Building carepet-rust project..."
-cd carepet-rust
-screen -dmS rust cargo build 
+cd university
+git checkout feat/instruqt-lab
+screen -dmS rust cargo build &
 echo "Build completed."
-
-# Replace queries in the specified files
-echo "Replacing queries in repository files..."
-replace_query "src/repositories/owner_repository.rs" "INSERT INTO owners (owner_id, name, address) VALUES (?, ?, ?)"
-replace_query "src/repositories/pet_repository.rs" "INSERT INTO pets (owner_id, pet_id) VALUES (?, ?)"
-
 ############################
 ### End of Dev Env
 ############################
