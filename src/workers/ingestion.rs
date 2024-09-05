@@ -14,14 +14,13 @@ pub async fn twitter_ingestion(
     id: usize,
     repositories: Arc<Repositories>,
 ) -> anyhow::Result<()>{
-    debug!("worker # {} ready", id);
 
     let prefix = format!("#{}", id);
     let mut s = Stats::new();
 
     let mut tweet = Tweet::default();
     let mut timeline = Timeline::default();
-
+    
     loop {
         tweet.fake_tweet();
         timeline.fake_timeline(tweet.clone());

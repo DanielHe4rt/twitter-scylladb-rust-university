@@ -34,15 +34,15 @@ const SELECT_LIKED_TIMELINE_QUERY: &str = "
         timeline_liked
     WHERE
         username = ? AND
-        liked = ?";
+        liked = ? ORDER BY created_at ASC";
 
 const SELECT_FIRST_LIKED_TWEETS: &str = "
     SELECT
         username, tweet_id, author, text, liked, bookmarked, retweeted, created_at
     FROM
-        first_timeline_tweets
+        timeline
     WHERE
-        username = ?";
+        username = ? AND liked = true ALLOW FILTERING";
 
 impl TimelineService {
     pub async fn new(connection: Arc<Session>) -> Self {
@@ -93,13 +93,14 @@ impl TimelineServiceTrait for TimelineService {
             &timeline.bookmarked,
             &timeline.retweeted,
             &timeline.created_at,
-        )).await?;
+        )).await.expect("Failed to insert to timeline");
 
         Ok(())
     }
 
     async fn get_timeline_by_username(&self, username: &str) -> anyhow::Result<()> {
-        self.connection.execute(&self.timeline_select_query, (username,)).await?;
+        let query = format!("SELECT username, tweet_id, author, text, liked, bookmarked, retweeted, created_at FROM timeline WHERE username = '{}'", username);
+        self.connection.query(query, ()).await?;
 
         Ok(())
     }

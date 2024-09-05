@@ -1,12 +1,12 @@
 define timeline_liked_mv
-create materialized view uni_twitter.timeline_liked as \
-	select tweet_id, username, author, author, text, liked, bookmarked, retweeted, created_at \
-	from timeline \
-	where tweet_id is not null \
-		and username is not null \
-		and created_at is not null \
-		and liked is not null \
-	primary key ((username, liked), created_at, tweet_id) \
+create materialized view uni_twitter.timeline_liked as
+	select tweet_id, username, author, author, text, liked, bookmarked, retweeted, created_at
+	from timeline
+	where tweet_id is not null
+		and username is not null
+		and created_at is not null
+		and liked is not null
+	primary key ((username, liked), created_at, tweet_id)
 	WITH CLUSTERING ORDER BY (created_at DESC);
 endef
 
@@ -20,7 +20,7 @@ CREATE MATERIALIZED VIEW uni_twitter.first_timeline_tweets AS
 endef
 
 
-base_keyspace = "CREATE KEYSPACE IF NOT EXISTS uni_twitter WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': '3'}  AND durable_writes = true AND tablets = {'enabled': false}"
+base_keyspace = "DROP KEYSPACE uni_twitter; CREATE KEYSPACE IF NOT EXISTS uni_twitter WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': '3'}  AND durable_writes = true AND tablets = {'enabled': false}"
 drop_base_keyspace = "DROP KEYSPACE IF EXISTS uni_twitter"
 single_dc_node_name = "ws-scylla-1"
 multi_dc_node_name = "scylla-dc1-node1"
@@ -62,17 +62,18 @@ setup-multi-dc:
 .PHONY: migrate
 migrate:
 	@echo "Migrating the base schema"
-	cd lessons/step1 && migrate --keyspace=uni_twitter --host=localhost:9042
+	@docker exec -it scylla-dc1-n1 cqlsh -e $(base_keyspace)
+	migrate --keyspace=uni_twitter --host=localhost:9042
 	@echo "Done! Data migration is complete!"
 
 .PHONY: timeline-liked-mv
 timeline-liked-mv:
 	@echo "Creating materialized view timeline_liked..."
-	@docker exec -it $(single_dc_node_name) cqlsh -e "$$timeline_liked_mv"
+	@docker exec -it scylla-dc1-n1 cqlsh -e "$$timeline_liked_mv"
 	@echo "Done! Materialized view timeline_liked is ready!"
 
 .PHONY: first-tweets-mv
 first-tweets-mv:
 	@echo "Creating materialized view first_timeline_tweets..."
-	@docker exec -it $(multi_dc_node_name) cqlsh -e "$$first_tweets_mv"
+	@docker exec -it scylla-dc1-n1  cqlsh -e "$$first_tweets_mv"
 	@echo "Done! Materialized view first_timeline_tweets is ready!"

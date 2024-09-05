@@ -24,7 +24,7 @@ async fn main() -> Result<(), anyhow::Error> {
     let mut set = JoinSet::new();
 
     // Generate a list of user workers
-    let workers = 20;
+    let workers = 5;
 
     // Spawn tasks for both Twitter ingestion and fetching timelines
     for i in 1..workers {
@@ -38,6 +38,7 @@ async fn main() -> Result<(), anyhow::Error> {
     }
 
     while let Some(res) = set.join_next().await {
+        println!("Task completed with result: {:?}", res);
         res?;
     }
 
