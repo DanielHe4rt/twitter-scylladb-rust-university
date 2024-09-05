@@ -1,6 +1,6 @@
 #!/bin/bash
 
-containers=("carepet-node1" "carepet-node2" "carepet-node3")
+containers=("scylla-dc1-n1" "scylla-dc2-n1")
 
 # Loop through each container and check if it is running
 for container_name in "${containers[@]}"; do
