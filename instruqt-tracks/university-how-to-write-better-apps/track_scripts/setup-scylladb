@@ -1,64 +1,44 @@
 #!/bin/bash
 
-
 ##############
 ### Build the dev environment
 ##############
+
 # Update and install necessary packages
 echo "Updating and installing build-essential..."
 sudo apt update -y
 sudo apt install build-essential screen -y
-docker network create \
-  --driver bridge \
-  --subnet 10.9.8.0/24 \
-  --gateway 10.9.8.1 \
-  --opt com.docker.network.bridge.name=scylla-dc \
-  --ipv6=false \
-  scylla-dc
 
+# Create Docker network
+docker network create --driver bridge --subnet 10.9.8.0/24 --gateway 10.9.8.1 --opt com.docker.network.bridge.name=scylla-dc --ipv6=false scylla-dc &
+
+# Pull Docker images in parallel
 images=(
-    "scylladb/scylla:6.1"
     "prom/prometheus:v2.53.1"
     "grafana/grafana:11.1.4"
+    "scylladb/scylla:6.1"
 )
 
-# Function to replace a query in a file
-replace_query() {
-    local FILE_PATH=$1
-    local QUERY=$2
-
-    if [ -f "$FILE_PATH" ]; then
-        sed -i "s/$QUERY//g" "$FILE_PATH"
-        echo "Query replaced successfully in $FILE_PATH"
-    else
-        echo "File $FILE_PATH does not exist."
-    fi
-}
-
-# Function to download a Docker image
-download_image() {
-    image=$1
-    echo "Downloading $image..."
-    docker pull --quiet $image &
-}
-
-# Loop through the images array and download each one in the background
 for image in "${images[@]}"; do
-    download_image $image
+    docker pull --quiet $image &
 done
 
-wait
+wait  # Wait for all Docker pulls to finish
 
 ##################################
 ### Starting Scylla Monitoring ###
 ##################################
 
+# Clone the Scylla monitoring repo in the background
 cd /root
-ssh-keyscan github.com >> ~/.ssh/known_hosts
-git clone https://github.com/scylladb/scylla-monitoring.git
+ssh-keyscan github.com >> ~/.ssh/known_hosts &
+git clone https://github.com/scylladb/scylla-monitoring.git &
+wait  # Wait for cloning and ssh-keyscan
+
 cd scylla-monitoring
 git checkout branch-5.8
 
+# Write the scylla_servers.yml configuration
 cat << EOF > prometheus/scylla_servers.yml
 - targets:
        - scylla-dc1-n1
@@ -76,28 +56,32 @@ cat << EOF > prometheus/scylla_servers.yml
        dc: dc2
 EOF
 
-./start-all.sh -v 6.0 -s prometheus/scylla_servers.yml --no-loki --no-alertmanager --no-renderer -D "--network scylla-dc"
+# Start Scylla monitoring in the background
+./start-all.sh -v 6.0 -s prometheus/scylla_servers.yml --no-loki --no-alertmanager --no-renderer -D "--network scylla-dc" &
 
-# Install Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# Install Rust in the background
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y &
+wait  # Wait for Rust to install
+
 source ~/.bashrc
 
-# Clone the carepet-rust repository
+# Clone and build the carepet-rust project in the background
 cd /root
-git clone https://github.com/DanielHe4rt/twitter-scylladb-rust-university.git university
+git clone https://github.com/DanielHe4rt/twitter-scylladb-rust-university.git university &
+wait  # Wait for cloning
 
-# Build the carepet-rust project
-echo "Building carepet-rust project..."
 cd university
 git checkout feat/instruqt-lab
-screen -dmS rust cargo build &
-echo "Build completed."
+screen -dmS rust cargo run &
+
 ############################
 ### End of Dev Env
 ############################
 
-echo "Script execution completed."
+# Tuning system settings in the background
+echo fs.aio-max-nr=1048576 | sudo tee /etc/sysctl.d/41-aio_max_nr.conf && sudo sysctl -p /etc/sysctl.d/41-aio_max_nr.conf &
 
-echo fs.aio-max-nr=1048576 | sudo tee /etc/sysctl.d/41-aio_max_nr.conf && sudo sysctl -p /etc/sysctl.d/41-aio_max_nr.conf
+# Completion message
+echo "Script execution completed."
 
 exit 0

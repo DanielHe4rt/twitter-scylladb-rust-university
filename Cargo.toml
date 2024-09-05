@@ -9,7 +9,8 @@ edition = "2021"
 chrono = { version = "0.4.35", features = ["serde"] }
 dotenvy = "0.15.7"
 scylla = "0.13.2"
-charybdis = "0.7.0"
+charybdis = "0.7.5"
+charybdis-migrate = "0.7.5"
 fake = { version = "2.9.2", features = ["derive"] }
 tokio = { version = "1.0.0", features = ["rt", "rt-multi-thread", "macros"] }
 thiserror = "1.0.58"
