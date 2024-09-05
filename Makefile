@@ -4,7 +4,7 @@ base_keyspace = "DROP KEYSPACE uni_twitter; CREATE KEYSPACE IF NOT EXISTS uni_tw
 .PHONY: setup-multi-dc
 setup:
 	@echo "Setting up multi DC..."
-	@docker compose --file ./docker/network.compose.yml --file ./docker/multi-docker-compose.yml up -d
+	@docker-compose --file ./docker/network.compose.yml --file ./docker/multi-docker-compose.yml up -d
 	@echo "Done! Multi DC setup is ready!"
 
 .PHONY: migrate
