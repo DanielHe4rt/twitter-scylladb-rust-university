@@ -5,6 +5,30 @@ set -euxo pipefail
 # Goal: Check Prometheus for specific metrics/gauges. If any gauge value is greater than zero,
 # it will execute a fail message and stop the script. If all values are zero, the script will finish successfully.
 
+cargo run &
+
+# Get the process ID of the cargo run
+CARGO_PID=$!
+
+# Wait for 10 seconds
+sleep 15
+
+# Kill the cargo process if still running
+if ps -p $CARGO_PID >/dev/null; then
+  echo "Killing cargo process after 10 seconds..."
+  kill $CARGO_PID
+else
+  # Wait for the cargo process to finish and capture its exit status
+  wait $CARGO_PID
+  CARGO_EXIT_CODE=$?
+
+  if [[ $CARGO_EXIT_CODE -ne 0 ]]; then
+    fail-message "Cargo run encountered an error. Fix your code and try again." || exit 1
+  else
+    echo "Cargo run finished successfully."
+  fi
+fi
+
 PROMETHEUS_URL="http://localhost:9090/api/v1/query"
 
 # Function to URL-encode query

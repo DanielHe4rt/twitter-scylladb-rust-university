@@ -13,7 +13,8 @@ mod logger;
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
     // Initialize the logger
-    println!("Initializing logger");
+    println!("Project Started!");
+    println!("Tip: if you want to see the logs, run the project with RUST_LOG=info");
     logger::init();
 
     // Setup database connections for TweetService and TimelineService

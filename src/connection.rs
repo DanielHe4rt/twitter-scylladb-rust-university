@@ -5,6 +5,7 @@ use scylla::statement::Consistency;
 pub async fn setup_connection() -> Session {
 
     let policies = DefaultPolicy::builder()
+        // .prefer_datacenter("SA-DC".to_string())
         .build();
 
     let execution_profile = ExecutionProfile::builder()

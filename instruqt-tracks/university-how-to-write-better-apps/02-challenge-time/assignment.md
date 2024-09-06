@@ -2,7 +2,7 @@
 slug: challenge-time
 id: ug7y3pozerrh
 type: challenge
-title: "Challenge Accepted: Optimize all CQL Gauges"
+title: 'Challenge Accepted: Optimize all CQL Gauges'
 teaser: Let's understand our data modeling and run our migrations.
 notes:
 - type: text
@@ -24,7 +24,7 @@ tabs:
   type: code
   hostname: scylladb
   path: /root/university/
-difficulty: "basic"
+difficulty: basic
 timelimit: 600
 ---
 

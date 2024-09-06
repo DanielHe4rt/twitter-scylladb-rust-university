@@ -13,3 +13,9 @@ migrate:
 	@docker exec -it scylla-dc1-n1 cqlsh -e $(base_keyspace)
 	migrate --keyspace=uni_twitter --host=localhost:9042
 	@echo "Done! Data migration is complete!"
+
+.PHONY: test
+test:
+	@echo "Running tests..."
+	bash tests
+	@echo "Done! Tests are complete!"

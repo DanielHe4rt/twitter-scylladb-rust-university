@@ -24,7 +24,7 @@ tabs:
   type: code
   hostname: scylladb
   path: /root/university/
-difficulty: "basic"
+difficulty: basic
 timelimit: 2400
 ---
 

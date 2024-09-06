@@ -24,7 +24,7 @@ tabs:
   type: code
   hostname: scylladb
   path: /root/university/
-difficulty: "basic"
+difficulty: basic
 ---
 
 Welcome to the IoT (CarePet) project! This lab is a hands-on project where you will implement the queries by yourself and make the app work properly.
