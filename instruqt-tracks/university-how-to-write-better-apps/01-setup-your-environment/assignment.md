@@ -1,8 +1,8 @@
 ---
-slug: create-multi-node-cluster
+slug: setup-your-environment
 id: bymiwpe7q7lw
 type: challenge
-title: Setup Environment
+title: "How to Write Better Apps: Introducing the Challenge and Setup the Environment"
 teaser: Just a test.
 notes:
 - type: video
@@ -23,8 +23,8 @@ tabs:
   title: Editor
   type: code
   hostname: scylladb
-  path: university/
-difficulty: ""
+  path: /root/university/
+difficulty: "basic"
 ---
 
 Welcome to the IoT (CarePet) project! This lab is a hands-on project where you will implement the queries by yourself and make the app work properly.

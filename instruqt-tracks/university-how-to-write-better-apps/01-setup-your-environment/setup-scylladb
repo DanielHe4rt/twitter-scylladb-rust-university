@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cargo install charybdis-migrate &
-
+set-workdir "/root/university"
 exit 0

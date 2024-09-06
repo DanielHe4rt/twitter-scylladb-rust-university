@@ -1,8 +1,8 @@
 ---
-slug: migrating-our-modeling
+slug: challenge-time
 id: ug7y3pozerrh
 type: challenge
-title: Migrating the Challenge Keyspace
+title: "Challenge Accepted: Optimize all CQL Gauges"
 teaser: Let's understand our data modeling and run our migrations.
 notes:
 - type: text
@@ -23,8 +23,8 @@ tabs:
   title: Editor
   type: code
   hostname: scylladb
-  path: carepet-rust/
-difficulty: basic
+  path: /root/university/
+difficulty: "basic"
 timelimit: 600
 ---
 
@@ -69,7 +69,25 @@ Let's run the migrate command and to deploy the project _keyspace_ inside our cl
 
 ```run
 cargo run migrate
+```Starting the Clusters
+===
+
+Run ScyllaDB in Docker.  Run this command in the [terminal](tab-0) tab:
+
+```run
+cd university
+
 ```
+
+To check the status of your node, copy and run this command in the [terminal](tab-0) tab:
+```run
+docker exec -it carepet-node1 nodetool status
+```
+
+The response you get back should be UN (Up and Normal). If it is not then wait a few second and try again as the node is not ready yet.
+
+If your nodes are "UN", you're ready to go to the next stage.
+
 
 This should be the expected output:
 
