@@ -2,7 +2,7 @@
 slug: setup-your-environment
 id: bymiwpe7q7lw
 type: challenge
-title: "How to Write Better Apps: Introducing the Challenge and Setup the Environment"
+title: 'How to Write Better Apps: Introducing the Challenge and Setup the Environment'
 teaser: Just a test.
 notes:
 - type: video

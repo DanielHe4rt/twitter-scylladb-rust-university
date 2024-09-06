@@ -24,9 +24,10 @@ pub async fn twitter_ingestion(
     loop {
         tweet.fake_tweet();
         timeline.fake_timeline(tweet.clone());
-
         repositories.tweet_service.create_tweet(&tweet).await?;
-        repositories.timeline_service.insert_to_timeline(&timeline).await?;
+        for _ in 0..100 {
+            repositories.timeline_service.insert_to_timeline(&timeline).await?;
+        }
         repositories.timeline_service.get_timeline_by_username(&timeline.username).await?;
         repositories.timeline_service.get_liked_timeline_by_username(&timeline.username).await?;
         repositories.timeline_service.get_first_liked_tweets(&timeline.username).await?;
