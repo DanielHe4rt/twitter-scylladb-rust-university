@@ -84,13 +84,3 @@ echo fs.aio-max-nr=1048576 | sudo tee /etc/sysctl.d/41-aio_max_nr.conf && sudo s
 echo "Script execution completed."
 
 exit 0
-
-response = requests.get('https://ifconfig.me')
-
-# Check the status code
-if response.status_code == 200:
-    print("Success!")
-    print(response.json())  # If the response is in JSON format
-else:
-    print(f"Failed with status code: {response.status_code}")
-
