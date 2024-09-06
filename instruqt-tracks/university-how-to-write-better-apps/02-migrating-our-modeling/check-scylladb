@@ -8,20 +8,20 @@ set -euxo pipefail
 PROMETHEUS_URL="http://localhost:9090/api/v1/query"
 
 # Check for non-prepared queries
-query="sum(cql:non_system_prepared1m[30s])"
+query="sum(rate(cql:non_system_prepared1m[1m]))"
 message="Are you sure that all queries are running under Prepared Statement? (Tip: check the 'get_timeline_by_username' function.)"
 response=$(curl -s "${PROMETHEUS_URL}?query=${query}")
 gauge_value=$(jq -r '.data.result[0].value[1]' <<< "$response")
 
 if [[ -z "$gauge_value" ]]; then
-    # echo "No result for non-prepared queries. Moving on..."
+     echo "No result for non-prepared queries. Moving on..."
 else
     if (( $(echo "$gauge_value > 0" | bc) )); then
-        # echo "Gauge for non-prepared queries is not zero: ${gauge_value}. Failing with message."
-        fail-message "Are you sure that all queries are running under Prepared Statement? (Tip: check the > get_timeline_by_username < function.)"
+         echo "Gauge for non-prepared queries is not zero: ${gauge_value}. Failing with message."
+        fail-message "$message"
         exit 1
     else
-    #    echo "Gauge for non-prepared queries is zero: ${gauge_value}. Moving on..."
+        echo "Gauge for non-prepared queries is zero: ${gauge_value}. Moving on..."
     fi
 fi
 
@@ -32,14 +32,14 @@ response=$(curl -s "${PROMETHEUS_URL}?query=${query}")
 gauge_value=$(jq -r '.data.result[0].value[1]' <<< "$response")
 
 if [[ -z "$gauge_value" ]]; then
-   # echo "No result for consistency level. Moving on..."
+    echo "No result for consistency level. Moving on..."
 else
     if (( $(echo "$gauge_value > 0" | bc) )); then
-    #    echo "Gauge for consistency level is not zero: ${gauge_value}. Failing with message."
-        echo "FAIL: Are you sure that all queries are running under Prepared Statement?"
+        echo "Gauge for consistency level is not zero: ${gauge_value}. Failing with message."
+        fail-message "$message"
         exit 1
     else
-    #    echo "Gauge for consistency level is zero: ${gauge_value}. Moving on..."
+        echo "Gauge for consistency level is zero: ${gauge_value}. Moving on..."
     fi
 fi
 
@@ -50,13 +50,13 @@ response=$(curl -s "${PROMETHEUS_URL}?query=${query}")
 gauge_value=$(jq -r '.data.result[0].value[1]' <<< "$response")
 
 if [[ -z "$gauge_value" ]]; then
-    # echo "No result for unpaged queries. Moving on..."
+     echo "No result for unpaged queries. Moving on..."
 else
     if (( $(echo "$gauge_value > 0" | bc) )); then
-    #    echo "Gauge for unpaged queries is not zero: ${gauge_value}. Failing with message."
+        echo "Gauge for unpaged queries is not zero: ${gauge_value}. Failing with message."
         fail-message "$message"
     else
-    #    echo "Gauge for unpaged queries is zero: ${gauge_value}. Moving on..."
+        echo "Gauge for unpaged queries is zero: ${gauge_value}. Moving on..."
     fi
 fi
 
@@ -67,13 +67,13 @@ response=$(curl -s "${PROMETHEUS_URL}?query=${query}")
 gauge_value=$(jq -r '.data.result[0].value[1]' <<< "$response")
 
 if [[ -z "$gauge_value" ]]; then
-   # echo "No result for reverse CQL queries. Moving on..."
+    echo "No result for reverse CQL queries. Moving on..."
 else
     if (( $(echo "$gauge_value > 0" | bc) )); then
-    #    echo "Gauge for reverse CQL queries is not zero: ${gauge_value}. Failing with message."
+        echo "Gauge for reverse CQL queries is not zero: ${gauge_value}. Failing with message."
         fail-message "$message"
     else
-    #    echo "Gauge for reverse CQL queries is zero: ${gauge_value}. Moving on..."
+        echo "Gauge for reverse CQL queries is zero: ${gauge_value}. Moving on..."
     fi
 fi
 
@@ -84,16 +84,16 @@ response=$(curl -s "${PROMETHEUS_URL}?query=${query}")
 gauge_value=$(jq -r '.data.result[0].value[1]' <<< "$response")
 
 if [[ -z "$gauge_value" ]]; then
-   # echo "No result for ALLOW FILTERING queries. Moving on..."
+    echo "No result for ALLOW FILTERING queries. Moving on..."
 else
     if (( $(echo "$gauge_value > 0" | bc) )); then
-    #    echo "Gauge for ALLOW FILTERING queries is not zero: ${gauge_value}. Failing with message."
+        echo "Gauge for ALLOW FILTERING queries is not zero: ${gauge_value}. Failing with message."
         fail-message "$message"
     else
-    #    echo "Gauge for ALLOW FILTERING queries is zero: ${gauge_value}. Moving on..."
+        echo "Gauge for ALLOW FILTERING queries is zero: ${gauge_value}. Moving on..."
     fi
 fi
 
 # If all gauges are clear, finish successfully
-# echo "All gauges clear. Finishing the lab..."
+ echo "All gauges clear. Finishing the lab..."
 exit 0

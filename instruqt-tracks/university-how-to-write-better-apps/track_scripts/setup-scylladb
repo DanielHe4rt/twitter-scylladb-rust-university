@@ -7,7 +7,7 @@
 # Update and install necessary packages
 echo "Updating and installing build-essential..."
 sudo apt update -y
-sudo apt install build-essential screen libssl-dev pkg-config -y
+sudo apt install build-essential screen libssl-dev pkg-config jq -y
 
 # Create Docker network
 docker network create --driver bridge --subnet 10.9.8.0/24 --gateway 10.9.8.1 --opt com.docker.network.bridge.name=scylla-dc --ipv6=false scylla-dc &
