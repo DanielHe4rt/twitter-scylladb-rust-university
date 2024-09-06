@@ -7,8 +7,14 @@ set -euxo pipefail
 
 PROMETHEUS_URL="http://localhost:9090/api/v1/query"
 
-# Check for non-prepared queries
-query="sum(rate(cql:non_system_prepared1m[1m]))"
+# Function to URL-encode query
+urlencode() {
+    local input="$1"
+    echo "$input" | jq -sRr @uri
+}
+
+ Check for non-prepared queries
+query=$(urlencode "sum(clamp_min(sum by (cluster, dc, instance, shard) (rate(scylla_query_processor_statements_prepared[30s])) - cql:all_system_shardrate1m, 0))")
 message="Are you sure that all queries are running under Prepared Statement? (Tip: check the 'get_timeline_by_username' function.)"
 response=$(curl -s "${PROMETHEUS_URL}?query=${query}")
 gauge_value=$(jq -r '.data.result[0].value[1]' <<< "$response")
@@ -18,15 +24,14 @@ if [[ -z "$gauge_value" ]]; then
 else
     if (( $(echo "$gauge_value > 0" | bc) )); then
          echo "Gauge for non-prepared queries is not zero: ${gauge_value}. Failing with message."
-        fail-message "$message"
-        exit 1
+        fail-message "$message" || exit 1
     else
         echo "Gauge for non-prepared queries is zero: ${gauge_value}. Moving on..."
     fi
 fi
 
 # Check for consistency level
-query="sum(rate(scylla_query_processor_queries{consistency_level='QUORUM'}[30s]))"
+query=$(urlencode "sum(rate(scylla_query_processor_queries{consistency_level='QUORUM'}[30s]))")
 message="You're running Multi-DC but are still using CL=Quorum. Wouldn't it be better to only be consistent under the selected datacenter?"
 response=$(curl -s "${PROMETHEUS_URL}?query=${query}")
 gauge_value=$(jq -r '.data.result[0].value[1]' <<< "$response")
@@ -36,15 +41,14 @@ if [[ -z "$gauge_value" ]]; then
 else
     if (( $(echo "$gauge_value > 0" | bc) )); then
         echo "Gauge for consistency level is not zero: ${gauge_value}. Failing with message."
-        fail-message "$message"
-        exit 1
+        fail-message "$message" || exit 1
     else
         echo "Gauge for consistency level is zero: ${gauge_value}. Moving on..."
     fi
 fi
 
 # Check for unpaged queries
-query="sum(rate(scylla_cql_unpaged_select_queries[30s])) - sum(rate(scylla_cql_unpaged_select_queries_per_ks{ks='system',cluster='cluster1', dc=~'.*', shard=~'.*'}[30s]))"
+query=$(urlencode "sum(rate(scylla_cql_unpaged_select_queries[30s])) - sum(rate(scylla_cql_unpaged_select_queries_per_ks{ks='system',cluster='cluster1', dc=~'.*', shard=~'.*'}[30s]))")
 message="You have huge timelines being fetched. Please make sure to set a page size for every SELECT statement."
 response=$(curl -s "${PROMETHEUS_URL}?query=${query}")
 gauge_value=$(jq -r '.data.result[0].value[1]' <<< "$response")
@@ -54,14 +58,14 @@ if [[ -z "$gauge_value" ]]; then
 else
     if (( $(echo "$gauge_value > 0" | bc) )); then
         echo "Gauge for unpaged queries is not zero: ${gauge_value}. Failing with message."
-        fail-message "$message"
+        fail-message "$message" || exit 1
     else
         echo "Gauge for unpaged queries is zero: ${gauge_value}. Moving on..."
     fi
 fi
 
 # Check for reverse CQL queries
-query="sum(rate(scylla_cql_reverse_queries[30s]))"
+query=$(urlencode "sum(rate(scylla_cql_reverse_queries[30s]))")
 message="One of your queries is using reverse clustering order. Please remove or denormalize it."
 response=$(curl -s "${PROMETHEUS_URL}?query=${query}")
 gauge_value=$(jq -r '.data.result[0].value[1]' <<< "$response")
@@ -71,14 +75,14 @@ if [[ -z "$gauge_value" ]]; then
 else
     if (( $(echo "$gauge_value > 0" | bc) )); then
         echo "Gauge for reverse CQL queries is not zero: ${gauge_value}. Failing with message."
-        fail-message "$message"
+        fail-message "$message" || exit 1
     else
         echo "Gauge for reverse CQL queries is zero: ${gauge_value}. Moving on..."
     fi
 fi
 
 # Check for ALLOW FILTERING queries
-query="sum(rate(scylla_cql_filtered_read_requests[30s]))"
+query=$(urlencode "sum(rate(scylla_cql_filtered_read_requests[30s]))")
 message="One of your queries is using ALLOW FILTERING and slowing the entire cluster. Please remove or denormalize it."
 response=$(curl -s "${PROMETHEUS_URL}?query=${query}")
 gauge_value=$(jq -r '.data.result[0].value[1]' <<< "$response")
@@ -88,7 +92,7 @@ if [[ -z "$gauge_value" ]]; then
 else
     if (( $(echo "$gauge_value > 0" | bc) )); then
         echo "Gauge for ALLOW FILTERING queries is not zero: ${gauge_value}. Failing with message."
-        fail-message "$message"
+        fail-message "$message" || exit 1
     else
         echo "Gauge for ALLOW FILTERING queries is zero: ${gauge_value}. Moving on..."
     fi

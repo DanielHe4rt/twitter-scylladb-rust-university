@@ -44,24 +44,24 @@
         ]
       ],
       "field_names": [
-        "username",
-        "created_at",
         "retweeted",
-        "tweet_id",
         "author",
-        "bookmarked",
+        "tweet_id",
+        "username",
+        "liked",
         "text",
-        "liked"
+        "created_at",
+        "bookmarked"
       ],
       "types_by_name": {
-        "bookmarked": "boolean",
-        "tweet_id": "uuid",
-        "username": "text",
-        "author": "text",
         "text": "text",
-        "created_at": "timeuuid",
+        "author": "text",
+        "bookmarked": "boolean",
         "liked": "boolean",
-        "retweeted": "boolean"
+        "created_at": "timeuuid",
+        "username": "text",
+        "retweeted": "boolean",
+        "tweet_id": "uuid"
       },
       "type_name": "",
       "table_name": "",
@@ -102,16 +102,16 @@
         ]
       ],
       "field_names": [
+        "created_at",
         "tweet_id",
         "author",
-        "text",
-        "created_at"
+        "text"
       ],
       "types_by_name": {
         "tweet_id": "uuid",
+        "author": "text",
         "created_at": "timeuuid",
-        "text": "text",
-        "author": "text"
+        "text": "text"
       },
       "type_name": "",
       "table_name": "",
@@ -174,29 +174,30 @@
         ]
       ],
       "field_names": [
-        "retweeted",
-        "bookmarked",
-        "username",
-        "text",
         "author",
+        "retweeted",
+        "tweet_id",
+        "username",
+        "bookmarked",
         "created_at",
-        "liked",
-        "tweet_id"
+        "text",
+        "liked"
       ],
       "types_by_name": {
-        "retweeted": "boolean",
-        "tweet_id": "uuid",
-        "bookmarked": "boolean",
-        "liked": "boolean",
-        "created_at": "timeuuid",
-        "username": "text",
+        "author": "text",
         "text": "text",
-        "author": "text"
+        "bookmarked": "boolean",
+        "tweet_id": "uuid",
+        "liked": "boolean",
+        "retweeted": "boolean",
+        "created_at": "timeuuid",
+        "username": "text"
       },
       "type_name": "",
       "table_name": "",
       "base_table": "",
       "partition_keys": [
+        "liked",
         "username"
       ],
       "clustering_keys": [
@@ -252,24 +253,24 @@
         ]
       ],
       "field_names": [
-        "retweeted",
+        "created_at",
         "bookmarked",
+        "liked",
+        "author",
         "username",
         "text",
-        "author",
-        "tweet_id",
-        "created_at",
-        "liked"
+        "retweeted",
+        "tweet_id"
       ],
       "types_by_name": {
-        "liked": "boolean",
-        "text": "text",
-        "username": "text",
-        "retweeted": "boolean",
+        "author": "text",
         "bookmarked": "boolean",
         "created_at": "timeuuid",
-        "tweet_id": "uuid",
-        "author": "text"
+        "liked": "boolean",
+        "retweeted": "boolean",
+        "text": "text",
+        "username": "text",
+        "tweet_id": "uuid"
       },
       "type_name": "",
       "table_name": "",
