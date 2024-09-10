@@ -39,7 +39,7 @@ This will create all `Tables and Materialized Views` needed using [Charybdis ORM
 
 If you're an CLI person, use the `make test` to run the projectt ests or just click in **check** at Instruqt UI.
 
-If you want to check the performance and see some gauges popping off, you can start the project by running: 
+If you want to check the performance and see some gauges popping off, you can start the project by running:
 
 ```run
 cargo run
