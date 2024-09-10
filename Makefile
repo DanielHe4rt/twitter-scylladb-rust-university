@@ -14,6 +14,13 @@ migrate:
 	migrate --keyspace=uni_twitter --host=localhost:9042
 	@echo "Done! Data migration is complete!"
 
+.PHONY: nodetool
+nodetool:
+	@echo "Migrating the base schema"
+	@docker exec -it scylla-dc1-n1 nodetool status
+	migrate --keyspace=uni_twitter --host=localhost:9042
+	@echo "Done! Data migration is complete!"
+
 .PHONY: test
 test:
 	@echo "Running tests..."

@@ -70,7 +70,7 @@ else
   fi
 fi
 
- Check for unpaged queries
+# Check for unpaged queries
 query=$(urlencode "sum(rate(scylla_cql_unpaged_select_queries[30s])) - sum(rate(scylla_cql_unpaged_select_queries_per_ks{ks='system',cluster='cluster1', dc=~'.*', shard=~'.*'}[30s]))")
 message="You have huge timelines being fetched. Please make sure to set a page size for every SELECT statement."
 response=$(curl -s "${PROMETHEUS_URL}?query=${query}")
