@@ -25,7 +25,7 @@ tabs:
   hostname: scylladb
   path: /root/university/
 difficulty: basic
---- 
+---
 
 For that scenario, we're gonna spin a `Multi Datacenter Cluster` with `docker-compose` and start by migrating the schema to our cluster.
 
@@ -34,7 +34,7 @@ The Challenge
 
 Your goal is to fix all `gauges` inside `Scylla Monitoring > CQL Dashboard`, which is related to:
 
-- Enable the DC-Aware Queries 
+- Enable the DC-Aware Queries
 - Fix all Non-Paged Queries
 - Validate if there's any Reverse CQL Queries running
 - Denormalize any ALLOW FILTERING in the code

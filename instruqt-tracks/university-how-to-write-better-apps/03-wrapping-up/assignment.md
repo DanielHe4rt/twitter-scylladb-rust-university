@@ -30,9 +30,9 @@ timelimit: 2400
 
 ## Summary
 
-To summarize, you saw what happens when your driver is not being properly used and how bad can be your app performance. 
+To summarize, you saw what happens when your driver is not being properly used and how bad can be your app performance.
 
-Let's do a quick wrap up: 
+Let's do a quick wrap up:
 
 1. **Reduced Latency with DC-Aware Routing**:
    - Queries will be efficiently routed to the nearest data center, minimizing cross-DC traffic and improving overall response time.
