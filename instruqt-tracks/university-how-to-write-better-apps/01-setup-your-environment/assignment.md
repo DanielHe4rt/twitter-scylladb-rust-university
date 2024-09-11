@@ -25,9 +25,7 @@ tabs:
   hostname: scylladb
   path: /root/university/
 difficulty: basic
----
-
-Welcome to the `How To Write Better Apps Challenge`  project! This lab is a hands-on project where you will apply all your new skills to improve your CQL health.
+--- 
 
 For that scenario, we're gonna spin a `Multi Datacenter Cluster` with `docker-compose` and start by migrating the schema to our cluster.
 
@@ -36,14 +34,12 @@ The Challenge
 
 Your goal is to fix all `gauges` inside `Scylla Monitoring > CQL Dashboard`, which is related to:
 
-- Enable the DC-Aware Queries
-- Fix all Non-Prepared Statements in the code
-- Turn all queries to work under Cross-DC
+- Enable the DC-Aware Queries 
 - Fix all Non-Paged Queries
 - Validate if there's any Reverse CQL Queries running
 - Denormalize any ALLOW FILTERING in the code
 
-> [!INFO]
+> [!NOTE]
 > * Tip 1: For each change in the code, don't forget to save it.
 > * Tip 2: For each test run using the `instruqt`  or `make` it will take 30 seconds to collect the metrics for compare.
 
