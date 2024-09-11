@@ -28,68 +28,33 @@ difficulty: basic
 timelimit: 2400
 ---
 
-With our database set up, our next goal is to run the stressor with the following command:
+## Summary
 
-```run
-cargo run stress -r
-```
+To summarize, you saw what happens when your driver is not being properly used and how bad can be your app performance. 
 
-After running this command, you may encounter a compilation error similar to:
+Let's do a quick wrap up: 
 
-```
-thread 'main' panicked at src/repositories/pet_repository.rs:39:72:
-called `Result::unwrap()` on an `Err` value: DbError(SyntaxError, "line 1:0 no viable alternative at input '<EOF>'")
-```
+1. **Reduced Latency with DC-Aware Routing**:
+   - Queries will be efficiently routed to the nearest data center, minimizing cross-DC traffic and improving overall response time.
 
-Your objective is to implement the missing queries based on the provided data model.
+2. **Increased Query Efficiency via Prepared Statements**:
+   - All queries will be utilizing Prepared Statements, reducing the overhead of query parsing and compilation, leading to faster execution times.
 
-Creating a new Owner
-===
+3. **Optimized Consistency Levels for Multi-DC**:
+   - Consistency levels will be fine-tuned, improving performance by reducing the strictness of `QUORUM` where unnecessary, while still maintaining data integrity.
 
-The current data model for our "Owner" table is as follows:
+4. **Improved Cluster Performance with Paged Queries**:
+   - Large datasets will be fetched in manageable chunks, preventing unpaged queries from overloading the cluster, which results in better resource utilization.
 
-```sql,nocopy
-CREATE TABLE IF NOT EXISTS carepet.owners
-(
-    owner_id UUID,
-    address TEXT,
-    name    TEXT,
-    PRIMARY KEY (owner_id)
-);
-```
+5. **Elimination of Reverse Queries**:
+   - Reverse clustering order queries will be identified and removed, reducing the processing burden on the database and improving read performance.
 
-Your task is to navigate to the [Editor Tab](tab-2) and create a `INSERT` query inside the `src/repositories/owner_repository.rs` at the line 9.
+6. **Removal of ALLOW FILTERING Queries**:
+   - Queries relying on `ALLOW FILTERING` will be refactored, eliminating slow scans and enhancing cluster-wide performance.
 
-> [!NOTE]
-> Look where the `INSERT_OWNER_QUERY` is being called and try to match the amount of arguments to build your query.
+7. **Clear and Optimized Monitoring Metrics**:
+   - Grafana dashboards will show zero or minimal values in critical gauges, confirming that performance bottlenecks have been resolved and the cluster is running at optimal efficiency.
 
-You can test your solution by clicking in **"Check"** or running the feature test in [terminal](tab-0):
+By achieving these optimizations, your ScyllaDB cluster will be better equipped to handle high query volumes, reduce latency, and maintain efficient resource management, all while ensuring a smooth user experience.
 
-```run
-cargo test owner_can_be_created
-```
-
-Good luck! If you encounter any issues, feel free to open the resolution tab for assistance.
-
-Resolution
-===
-
-To resolve the issue, you need to construct your query based on the parameters in the order they are executed around line `~34`. The parameters should be:
-- owner_id
-- name
-- address
-
-The `INSERT` query to add is:
-
-```sql
-INSERT INTO owners (owner_id, name, address) VALUES (?, ?, ?)
-```
-
-In the repository, it should be defined as:
-
-```rust
-const INSERT_OWNER_QUERY: &str =
-  r"INSERT INTO owners (owner_id, name, address) VALUES (?, ?, ?)";
-```
-
-Let's move on to the next stage!
+Don't forget to visit other courses at [Scylla University](https://university.scylladb.com) and rate this lab at the next page!
